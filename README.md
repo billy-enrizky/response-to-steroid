@@ -10,7 +10,7 @@ flowchart TD
     SEL1 --> GBT1[Gradient Boosting Tree]
     SEL1 --> LP1[Linear Probing]
     SEL1 --> KNN1[KNN Probing]
-    SVM1 --> ProbImg[Probabilities<br/>(best model: SVM)]
+    SVM1 --> ProbImg[Probabilities <br/> (best model: SVM)]
 
     %% Clinical-data pipeline
     CD([Clinical Data]) --> PREP[Data Preprocessing]
