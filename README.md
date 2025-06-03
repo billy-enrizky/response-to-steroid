@@ -4,7 +4,7 @@
 flowchart TD
     %% Pathology-slide pipeline
     PS([Pathology Slides]) --> UE[UNI Encoder]
-    UE --> SEL1{Train & Test<br/>5 Models}
+    UE --> SEL1{Train & Test <br/> 5 Models}
     SEL1 --> RF1[Random Forest]
     SEL1 --> SVM1[SVM]
     SEL1 --> GBT1[Gradient Boosting Tree]
