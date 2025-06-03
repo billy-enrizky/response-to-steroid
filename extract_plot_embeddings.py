@@ -64,15 +64,8 @@ all_patient_csv_path = 'index_path_separated_portal_tract.csv'
 if os.path.exists(all_patient_csv_path):
     all_patient_df_info = pd.read_csv(all_patient_csv_path)
 else:
-    print(f"Warning: {all_patient_csv_path} not found. Patient ID extraction might be limited or use dummy data.")
-    # Create a dummy all_patient_df_info if CSV is not found, based on loaded features
-    all_dummy_paths = train_image_paths_orig + test_image_paths_orig
-    all_dummy_labels = np.concatenate([train_labels_orig, test_labels_orig])
-    all_patient_df_info = pd.DataFrame({
-        'image_path': all_dummy_paths,
-        'label': all_dummy_labels,
-        'class_name': ['Response' if lbl == 0 else 'No Response' for lbl in all_dummy_labels]
-    })
+    print(f"Warning: {all_patient_csv_path} not found. Exiting script.")
+    exit(1) # Exit if no patient info available
 train_image_paths_orig = all_patient_df_info['image_path']
 test_image_paths_orig = all_patient_df_info['image_path']
 
