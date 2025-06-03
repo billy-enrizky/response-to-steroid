@@ -1,5 +1,6 @@
 # Multimodal AI prediction
 
+```mermaid
 flowchart TD
     %% Pathology-slide pipeline
     PS([Pathology Slides]) --> UE[UNI Encoder]
