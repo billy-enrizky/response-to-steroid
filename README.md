@@ -33,6 +33,7 @@ flowchart TD
     ProbImg -->|w = 0.5| FUS[Late Fusion]
     ProbClin -->|w = 0.5| FUS
     FUS --> PRED[Final Prediction]
+```
 
 
 ```mermaid
