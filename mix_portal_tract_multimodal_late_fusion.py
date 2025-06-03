@@ -154,7 +154,7 @@ log_output(f"Number of unique patients in testing set: {n_test_patients}")
 log_output("\n=== Loading and Processing Clinical Data ===")
 
 df = pd.read_csv('cleaned_dataset.csv')
-df_cleaned = df.drop(columns=['Patient study id Biopsy #1'])
+df_cleaned = df.rename(columns={'Patient study id Biopsy #1': 'patient_id'})
 
 # Create age features
 df_cleaned['Transplant Age'] = (((pd.to_datetime(df_cleaned['Date of transplant']) - 
@@ -166,6 +166,8 @@ df_cleaned['Transplant Biopsy Diff'] = (((pd.to_datetime(df_cleaned['Biopsy (acc
 
 # Drop date columns
 df_cleaned.drop(columns=['Date of birth ', 'Date of transplant', 'Biopsy (accession) Date Biopsy #1'], inplace=True)
+
+cat_summary = df_cleaned.describe(include='object')
 
 # Apply mappings for categorical variables
 mappings = {
@@ -221,8 +223,6 @@ for col in num_summary.columns:
     df_cleaned = impute_cont_column(df_cleaned, col)
 
 # Create patient_id column from index for merging
-df_cleaned = df_cleaned.reset_index()
-df_cleaned.rename(columns={'index': 'patient_id'}, inplace=True)
 df_cleaned['patient_id'] = df_cleaned['patient_id'].astype(str)
 
 # Prepare clinical features
@@ -238,25 +238,15 @@ log_output(f"Clinical data shape: {X_clinical_normalized.shape}")
 log_output(f"Number of patients in clinical data: {len(patient_ids)}")
 
 # ──────────────────────────── 10. Patient Matching ──────────────────────────
-# Match clinical data with image data by patient ID
-log_output("\n=== Matching Clinical Data with Patient IDs ===")
+# Split clinical data independently into training and testing sets (80/20)
+log_output("\n=== Splitting Clinical Data ===")
 
-# Get unique patient IDs from train and test sets
-train_patient_ids = train_imgs_df['patient_id'].unique()
-test_patient_ids = test_imgs_df['patient_id'].unique()
+X_clinical_train, X_clinical_test, y_clinical_train, y_clinical_test, clinical_train_ids, clinical_test_ids = train_test_split(
+    X_clinical_normalized, y_clinical, patient_ids, test_size=0.2, random_state=SEED, stratify=y_clinical
+)
 
-# Find indices in clinical data corresponding to train/test patients
-train_clinical_indices = df_cleaned['patient_id'].isin(train_patient_ids)
-test_clinical_indices = df_cleaned['patient_id'].isin(test_patient_ids)
-
-# Split clinical data accordingly
-X_clinical_train = X_clinical_normalized[train_clinical_indices]
-y_clinical_train = y_clinical[train_clinical_indices].values
-X_clinical_test = X_clinical_normalized[test_clinical_indices]
-y_clinical_test = y_clinical[test_clinical_indices].values
-
-log_output(f"Clinical train data shape: {X_clinical_train.shape}")
-log_output(f"Clinical test data shape: {X_clinical_test.shape}")
+log_output(f"Clinical train data shape: {X_clinical_train.shape} ({len(clinical_train_ids)} patients)")
+log_output(f"Clinical test data shape: {X_clinical_test.shape} ({len(clinical_test_ids)} patients)")
 
 # Aggregated patient-level features for image data
 def aggregate_patient_features(image_features, imgs_df):
@@ -518,7 +508,7 @@ image_models_patient_results = {
         'probabilities': gb_img_results['probabilities']
     },
     'LinearProbe': {
-        'predictions': linprobe_dump['preds_all'].cpu().numpy(),
+        'predictions': linprobe_dump['preds_all'],
         'probabilities': None
     },
     'KNNProbe': {

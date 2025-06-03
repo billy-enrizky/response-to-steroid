@@ -32,7 +32,7 @@ import seaborn as sns
 simplefilter("ignore", category=ConvergenceWarning)
 
 # Setup logging
-log_file = "multimodal_fusion_results.log"
+log_file = "multimodal_fusion_early_results.log"
 def log_output(message):
     with open(log_file, "a") as f:
         f.write(message + "\n")
@@ -146,6 +146,8 @@ df_cleaned['Transplant Biopsy Diff'] = (((pd.to_datetime(df_cleaned['Biopsy (acc
 # Drop date columns
 df_cleaned.drop(columns=['Date of birth ', 'Date of transplant', 'Biopsy (accession) Date Biopsy #1'], inplace=True)
 
+cat_summary = df_cleaned.describe(include='object')
+
 # Apply mappings for categorical variables
 mappings = {
     'RAI Classification Biopsy #2': {'Response': 1, 'No Response': 0},
@@ -191,7 +193,6 @@ def impute_cont_column(df, col):
     return df
 
 # Apply imputation
-cat_summary = df_cleaned.describe(include='object')
 for col in cat_summary.columns:
     df_cleaned = impute_column(df_cleaned, col)
 
