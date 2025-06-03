@@ -691,7 +691,7 @@ log_output("\n=== Splitting Clinical Data ===")
 
 # Split clinical data with stratification
 X_clinical_train, X_clinical_test, y_clinical_train, y_clinical_test, clinical_train_ids, clinical_test_ids = train_test_split(
-    X_clinical_normalized, y_clinical, patient_ids, test_size=0.2, random_state=SEED, stratify=y_clinical
+    X_clinical_normalized, y_clinical, patient_ids, test_size=0.2, random_state=88, stratify=y_clinical
 )
 
 log_output(f"Clinical train data shape: {X_clinical_train.shape} ({len(clinical_train_ids)} patients)")
@@ -934,3 +934,66 @@ fusion_results_df = pd.DataFrame({
 fusion_results_path = "dimension_weighted_fusion_results.csv"
 fusion_results_df.to_csv(fusion_results_path, index=False)
 log_output(f"Saved fusion results to {fusion_results_path}")
+
+# Calculate standard deviations using bootstrap resampling
+import numpy as np
+from sklearn.metrics import accuracy_score
+import random
+
+# Set seed for reproducibility
+random.seed(42)
+np.random.seed(42)
+
+# Bootstrap parameters
+n_bootstraps = 1000
+n_samples = len(true_labels)
+
+# Arrays to store accuracy values for each bootstrap sample
+pathology_accuracies = []
+clinical_accuracies = []
+fusion_accuracies = []
+
+for _ in range(n_bootstraps):
+    # Generate bootstrap indices with replacement
+    indices = np.random.choice(range(n_samples), size=n_samples, replace=True)
+    
+    # Get bootstrap samples
+    boot_true_labels = [true_labels[i] for i in indices]
+    boot_image_probs = [image_probs[i] for i in indices]
+    boot_clinical_probs = [clinical_probs[i] for i in indices]
+    
+    # Pathology-only accuracy
+    boot_image_preds = [1 if p >= 0.5 else 0 for p in boot_image_probs]
+    boot_image_acc = accuracy_score(boot_true_labels, boot_image_preds)
+    pathology_accuracies.append(boot_image_acc)
+    
+    # Clinical-only accuracy
+    boot_clinical_preds = [1 if p >= 0.5 else 0 for p in boot_clinical_probs]
+    boot_clinical_acc = accuracy_score(boot_true_labels, boot_clinical_preds)
+    clinical_accuracies.append(boot_clinical_acc)
+    
+    # Multimodal fusion accuracy
+    boot_fused_probs = []
+    for img_p, clin_p in zip(boot_image_probs, boot_clinical_probs):
+        weighted_prob = img_weight * img_p + clinical_weight * clin_p
+        boot_fused_probs.append(weighted_prob)
+    
+    boot_fused_preds = [1 if p >= 0.5 else 0 for p in boot_fused_probs]
+    boot_fusion_acc = accuracy_score(boot_true_labels, boot_fused_preds)
+    fusion_accuracies.append(boot_fusion_acc)
+
+# Calculate standard deviation and mean for each approach
+pathology_std = np.std(pathology_accuracies)
+pathology_mean = np.mean(pathology_accuracies)
+
+clinical_std = np.std(clinical_accuracies)
+clinical_mean = np.mean(clinical_accuracies)
+
+fusion_std = np.std(fusion_accuracies)
+fusion_mean = np.mean(fusion_accuracies)
+
+# Log results
+log_output("\n=== Standard Deviation of Accuracy (Bootstrap Method) ===")
+log_output(f"Pathology-only: Mean Accuracy = {pathology_mean:.4f}, Std Dev = {pathology_std:.4f}")
+log_output(f"Clinical-only: Mean Accuracy = {clinical_mean:.4f}, Std Dev = {clinical_std:.4f}")
+log_output(f"Multimodal Fusion: Mean Accuracy = {fusion_mean:.4f}, Std Dev = {fusion_std:.4f}")
