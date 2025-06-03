@@ -2,42 +2,6 @@
 
 ```mermaid
 flowchart TD
-    %% Pathology-slide pipeline
-    PS([Pathology Slides]) --> UE[UNI Encoder]
-    UE --> SEL1{Train & Test<br/>5 Models}
-    SEL1 --> RF1[Random Forest]
-    SEL1 --> SVM1[SVM]
-    SEL1 --> GBT1[Gradient Boosting Tree]
-    SEL1 --> LP1[Linear Probing]
-    SEL1 --> KNN1[KNN Probing]
-    RF1 --> ProbImg[Probabilities<br/>best model: SVM]
-    SVM1 --> ProbImg
-    GBT1 --> ProbImg
-    LP1 --> ProbImg
-    KNN1 --> ProbImg
-    
-    %% Clinical-data pipeline
-    CD([Clinical Data]) --> PREP[Data Preprocessing]
-    PREP --> IMP[Data Imputation]
-    IMP --> SEL2{Train & Test<br/>4 Models}
-    SEL2 --> RF2[Random Forest]
-    SEL2 --> SVM2[SVM]
-    SEL2 --> GBT2[Gradient Boosting Tree]
-    SEL2 --> LOGR[Logistic Regression]
-    RF2 --> ProbClin[Probabilities<br/>best model: Random Forest]
-    SVM2 --> ProbClin
-    GBT2 --> ProbClin
-    LOGR --> ProbClin
-    
-    %% Late fusion
-    ProbImg -->|w = 0.5| FUS[Late Fusion]
-    ProbClin -->|w = 0.5| FUS
-    FUS --> PRED[Final Prediction]
-```
-
-
-```mermaid
-flowchart TD
     subgraph Data_Preparation
         A1[Load Pathology Images] --> A2[Train-Test Split]
         A2 --> A3[Create Image Datasets]
@@ -95,3 +59,40 @@ flowchart TD
     Clinical_Analysis --> Multimodal_Fusion
     Image_Analysis --> Multimodal_Fusion
     Multimodal_Fusion --> G[Final Performance Comparison]
+```
+
+```mermaid
+flowchart TD
+    %% Pathology-slide pipeline
+    PS([Pathology Slides]) --> UE[UNI Encoder]
+    UE --> SEL1{Train & Test<br/>5 Models}
+    SEL1 --> RF1[Random Forest]
+    SEL1 --> SVM1[SVM]
+    SEL1 --> GBT1[Gradient Boosting Tree]
+    SEL1 --> LP1[Linear Probing]
+    SEL1 --> KNN1[KNN Probing]
+    RF1 --> ProbImg[Probabilities<br/>best model: SVM]
+    SVM1 --> ProbImg
+    GBT1 --> ProbImg
+    LP1 --> ProbImg
+    KNN1 --> ProbImg
+    
+    %% Clinical-data pipeline
+    CD([Clinical Data]) --> PREP[Data Preprocessing]
+    PREP --> IMP[Data Imputation]
+    IMP --> SEL2{Train & Test<br/>4 Models}
+    SEL2 --> RF2[Random Forest]
+    SEL2 --> SVM2[SVM]
+    SEL2 --> GBT2[Gradient Boosting Tree]
+    SEL2 --> LOGR[Logistic Regression]
+    RF2 --> ProbClin[Probabilities<br/>best model: Random Forest]
+    SVM2 --> ProbClin
+    GBT2 --> ProbClin
+    LOGR --> ProbClin
+    
+    %% Late fusion
+    ProbImg -->|w = 0.5| FUS[Late Fusion]
+    ProbClin -->|w = 0.5| FUS
+    FUS --> PRED[Final Prediction]
+```
+
