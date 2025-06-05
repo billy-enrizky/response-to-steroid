@@ -98,16 +98,16 @@ print(f"[INFO] saved slide index → {csv_out}")
 
 
 # Extract features
-from uni.downstream.extract_patch_features import extract_patch_features_from_dataloader
-train_features = extract_patch_features_from_dataloader(model, train_dataloader)
+# from uni.downstream.extract_patch_features import extract_patch_features_from_dataloader
+# train_features = extract_patch_features_from_dataloader(model, train_dataloader)
 
-# Save train_features and test_features to files
-with open('train_features_mix_portal_tract.pkl', 'wb') as f:
-    pickle.dump(train_features, f)
+# # Save train_features and test_features to files
+# with open('train_features_mix_portal_tract.pkl', 'wb') as f:
+#     pickle.dump(train_features, f)
 
-test_features = extract_patch_features_from_dataloader(model, test_dataloader)
-with open('test_features_mix_portal_tract.pkl', 'wb') as f:
-    pickle.dump(test_features, f)
+# test_features = extract_patch_features_from_dataloader(model, test_dataloader)
+# with open('test_features_mix_portal_tract.pkl', 'wb') as f:
+#     pickle.dump(test_features, f)
 
 # Load train_features and test_features from files
 with open('train_features_mix_portal_tract.pkl', 'rb') as f:
@@ -249,7 +249,7 @@ log_output("\n--- Few-Shot Evaluation ---")
 fewshot_episodes, fewshot_dump = eval_fewshot(
     train_feats=train_feats, train_labels=train_labels,
     test_feats=test_feats, test_labels=test_labels,
-    n_iter=500, n_way=2, n_shot=4, n_query=test_feats.shape[0],
+    n_iter=1, n_way=2, n_shot=4, n_query=test_feats.shape[0],
     center_feats=True, normalize_feats=True, average_feats=True,
 )
 log_output("Few Shot Episodes:")
@@ -745,7 +745,7 @@ def train_eval_sklearn_model(model, X_train, y_train, X_test, y_test, model_name
 log_output("\n=== Training Clinical Models ===")
 
 # 1. Random Forest on Clinical Features
-rf_clinical = RandomForestClassifier(random_state=777, criterion='gini', n_estimators=50, max_depth=4)
+rf_clinical = RandomForestClassifier(random_state=8888, criterion='gini', n_estimators=1000, max_depth=4)
 rf_clinical_results = train_eval_sklearn_model(
     rf_clinical, X_clinical_train, y_clinical_train,
     X_clinical_test, y_clinical_test, "RandomForest (Clinical)", scale_features=False
@@ -870,7 +870,7 @@ for i, patient_id in enumerate(clinical_test_ids):
         
         # Average clinical probabilities
         avg_clinical_prob = np.mean(clinical_model_probs) if clinical_model_probs else 0.5
-        clinical_probs.append(avg_clinical_prob)
+        clinical_probs.append(lr_prob)
         
         # Ground truth
         if isinstance(y_clinical_test, pd.Series):
