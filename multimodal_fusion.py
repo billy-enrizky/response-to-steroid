@@ -24,7 +24,7 @@ from sklearn.exceptions import ConvergenceWarning
 from warnings import simplefilter
 import itertools
 
-from utils.my_utils import log_output, get_eval_metrics, eval_sklearn_classifier, calculate_feature_weights, get_slide_level_predictions, train_eval_sklearn_model
+from utils.my_utils import get_eval_metrics, eval_sklearn_classifier, calculate_feature_weights, get_slide_level_predictions, train_eval_sklearn_model
 
 # Set up logging
 log_file = "all_combinations_multimodal_fusion.log"

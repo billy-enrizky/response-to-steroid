@@ -7,6 +7,8 @@ from sklearn.metrics import (
     classification_report, roc_auc_score
 )
 from sklearn.preprocessing import StandardScaler
+from collections import defaultdict
+
 
 # Setup logging
 log_file = "model_evaluation_mix_portal_tract.log"
@@ -170,3 +172,120 @@ def eval_sklearn_classifier(classifier, train_feats, train_labels, test_feats, t
     }
     
     return metrics, dump
+
+def calculate_feature_weights():
+    """Calculate weights based on feature dimensions"""
+    img_dims = 1536  # Vision Transformer feature dimension
+    clinical_dims = 13  # Clinical feature dimension
+    total_dims = img_dims + clinical_dims
+    img_weight = 0.5
+    clinical_weight = 0.5
+    
+    log_output(f"Dimension-based weights - Image: {img_weight:.4f}, Clinical: {clinical_weight:.4f}")
+    return img_weight, clinical_weight
+
+def train_eval_sklearn_model(model, X_train, y_train, X_test, y_test, model_name, scale_features=False):
+    """Train and evaluate a scikit-learn model"""
+    log_output(f"Training {model_name}...")
+    
+    # Scale features if needed
+    scaler = None
+    if scale_features:
+        scaler = StandardScaler()
+        X_train = scaler.fit_transform(X_train)
+        X_test = scaler.transform(X_test)
+    
+    # Train model
+    model.fit(X_train, y_train)
+    
+    # Make predictions
+    y_pred = model.predict(X_test)
+    y_prob = model.predict_proba(X_test) if hasattr(model, "predict_proba") else None
+    
+    # Calculate metrics
+    accuracy = accuracy_score(y_test, y_pred)
+    balanced_acc = balanced_accuracy_score(y_test, y_pred)
+    if y_prob is not None and len(np.unique(y_test)) > 1:
+        if y_prob.shape[1] == 2:  # Binary classification
+            auc = roc_auc_score(y_test, y_prob[:, 1])
+        else:  # Multi-class classification
+            auc = roc_auc_score(y_test, y_prob, multi_class='ovr')
+    else:
+        auc = None
+    
+    log_output(f"{model_name} - Accuracy: {accuracy:.4f}, Balanced Acc: {balanced_acc:.4f}")
+    if auc is not None:
+        log_output(f"{model_name} - AUC: {auc:.4f}")
+    
+    return {
+        'model': model,
+        'scaler': scaler,
+        'accuracy': accuracy,
+        'balanced_accuracy': balanced_acc,
+        'auc': auc,
+        'predictions': y_pred,
+        'probabilities': y_prob
+    }
+
+def get_slide_level_predictions(test_dataset_items, predictions, probabilities=None):
+    """Aggregate patch-level predictions to slide-level predictions"""
+    slide_preds = defaultdict(list)
+    slide_probs = defaultdict(list)
+    slide_actual = {}
+    
+    # Remove the debug print statement
+    # print(probabilities)
+    
+    for i, ((img_path, actual_label), pred_label) in enumerate(zip(test_dataset_items, predictions)):
+        basename = os.path.basename(img_path)
+        parts = basename.split('-')
+        if len(parts) < 2:
+            log_output(f"Filename format unexpected: {basename}")
+            continue
+        
+        # Extract slide_id (patient_id)
+        slide_id = parts[1]
+        
+        # Store prediction for this slide
+        slide_preds[slide_id].append(pred_label)
+        
+        # Store probability if available
+        if probabilities is not None:
+            if isinstance(probabilities, np.ndarray):
+                if probabilities.ndim == 2 and probabilities.shape[1] == 2:
+                    # Binary classification probabilities for positive class
+                    prob = probabilities[i][1]  # Fixed: use index i instead of '_'
+                    slide_probs[slide_id].append(prob)
+                else:
+                    # Use prediction with some uncertainty
+                    slide_probs[slide_id].append(float(pred_label))
+            else:
+                slide_probs[slide_id].append(float(pred_label))
+        
+        # Set the actual label for the slide
+        if slide_id not in slide_actual:
+            slide_actual[slide_id] = actual_label
+        else:
+            if slide_actual[slide_id] != actual_label:
+                log_output(f"Warning: inconsistent labels for slide {slide_id}")
+    
+    # Compute majority vote prediction for each slide
+    slide_pred_majority = {}
+    slide_prob_avg = {}
+    for slide, preds in slide_preds.items():
+        # Majority vote: if average is less than 0.5 then label 0; otherwise label 1
+        avg_pred = np.mean(preds)
+        majority_label = 0 if avg_pred < 0.5 else 1
+        slide_pred_majority[slide] = majority_label
+    
+    # Compute average probability for each slide
+    for slide, probs in slide_probs.items():
+        slide_prob_avg[slide] = np.mean(probs)
+    
+    # Prepare result in format suitable for evaluation
+    slide_ids = list(slide_actual.keys())
+    y_true_slides = [slide_actual[sid] for sid in slide_ids]
+    y_pred_slides = [slide_pred_majority[sid] for sid in slide_ids]
+    y_prob_slides = [slide_prob_avg.get(sid, 0.5) for sid in slide_ids] if slide_probs else None
+    
+    return slide_ids, y_true_slides, y_pred_slides, y_prob_slides
