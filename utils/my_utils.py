@@ -8,7 +8,6 @@ from sklearn.metrics import (
 )
 from sklearn.preprocessing import StandardScaler
 
-
 # Setup logging
 log_file = "model_evaluation_mix_portal_tract.log"
 def log_output(message):
