@@ -48,7 +48,7 @@ def main():
     
     # ------ 1. Load Clinical Data ------
     log_output("\n=== Loading Clinical Data ===")
-    with open('df_cleaned_normalized.pkl', 'rb') as f:
+    with open('clinical_features_portal_tract.pkl', 'rb') as f:
         df_cleaned = pickle.load(f)
     
     X_clinical = df_cleaned.drop(columns=["RAI Classification Biopsy #2", "patient_id"]).values
@@ -110,9 +110,9 @@ def main():
     # Define model dictionaries
     clinical_model_configs = {
         'lr': {'model': sk_LogisticRegression, 'params': {'C': 0.1, 'penalty': 'l2', 'solver': 'liblinear', 'random_state': 42}, 'scale': True},
-        'svm': {'model': SVC, 'params': {'C': 1.0, 'kernel': 'rbf', 'gamma': 'scale', 'probability': True, 'random_state': 42}, 'scale': True},
-        'rf': {'model': RandomForestClassifier, 'params': {'n_estimators': 200, 'max_depth': 10, 'random_state': 42}, 'scale': False},
-        'gb': {'model': GradientBoostingClassifier, 'params': {'n_estimators': 200, 'learning_rate': 0.1, 'max_depth': 6, 'random_state': 42}, 'scale': False}
+        'svm': {'model': SVC, 'params': {'C': 0.1, 'kernel': 'rbf', 'gamma': 'auto', 'random_state': 8888}, 'scale': True},
+        'rf': {'model': RandomForestClassifier, 'params': {'random_state': 777, 'criterion': 'gini', 'n_estimators': 50, 'max_depth': 4}, 'scale': False},
+        'gb': {'model': GradientBoostingClassifier, 'params':{'learning_rate': 0.3, 'n_estimators': 50, 'max_depth': 6, 'random_state': 8888}, 'scale': False}
     }
     
     pathology_model_configs = {
