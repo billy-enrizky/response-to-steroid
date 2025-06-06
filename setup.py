@@ -6,7 +6,7 @@ setup(
     name='uni',
     version='0.1.0',
     description='UNI',
-    url='https://github.com/mahmoodlab/UNI',
+    url='https://github.com/billy-enrizky/response-to-steroid',
     author='RJC,MYL,TD',
     author_email='',
     license='CC BY-NC 4.0',
