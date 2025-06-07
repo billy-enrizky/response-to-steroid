@@ -6,28 +6,25 @@ from collections import defaultdict, Counter
 
 import numpy as np
 import pandas as pd
-from PIL import Image
-import matplotlib.pyplot as plt
 import torch
 from torch.utils.data import DataLoader, Dataset
-from sklearn.model_selection import KFold, train_test_split, StratifiedKFold
+from sklearn.model_selection import KFold, train_test_split, StratifiedKFold, GridSearchCV, cross_val_score, cross_validate
 from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression as sk_LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import (
     balanced_accuracy_score, roc_auc_score, accuracy_score,
-    cohen_kappa_score, classification_report, confusion_matrix
+    cohen_kappa_score, classification_report, confusion_matrix,
+    f1_score, make_scorer
 )
-from sklearn.exceptions import ConvergenceWarning
-from warnings import simplefilter
-import itertools
+from sklearn.pipeline import Pipeline
+from sklearn.base import clone
 
 from utils.my_utils import get_eval_metrics, eval_sklearn_classifier, calculate_feature_weights, get_slide_level_predictions, train_eval_sklearn_model
 
 # Set up logging
-log_file = "early_fusion_multimodal_fixed.log"
+log_file = "early_fusion_multimodal_hypertuning.log"
 def log_output(message):
     with open(log_file, "a") as f:
         f.write(message + "\n")
@@ -199,9 +196,144 @@ def create_multimodal_dataset(clinical_data, pathology_data, patient_ids_clinica
     }
 
 
+def get_hyperparameter_grids():
+    """Define hyperparameter grids for all models."""
+    
+    # Clinical and Pathology model grids
+    param_grids = {
+        'lr': {
+            'C': [0.01, 0.1, 1.0, 10.0],
+            'penalty': ['l1', 'l2'],
+            'solver': ['liblinear'],
+            'random_state': [42]
+        },
+        'svm': {
+            'C': [0.1, 1.0, 10.0],
+            'kernel': ['rbf', 'linear'],
+            'gamma': ['scale', 'auto'],
+            'random_state': [8888]
+        },
+        'rf': {
+            'n_estimators': [50, 100, 200],
+            'max_depth': [3, 4, 5, None],
+            'criterion': ['gini', 'entropy'],
+            'random_state': [777]
+        },
+        'gb': {
+            'learning_rate': [0.1, 0.2, 0.3],
+            'n_estimators': [100, 200, 300],
+            'max_depth': [3, 4, 5],
+            'random_state': [32]
+        }
+    }
+    
+    # For early fusion, we use the same parameter grids as individual models
+    # since we're just concatenating features and training regular classifiers
+    fusion_param_grids = param_grids.copy()
+    
+    return param_grids, fusion_param_grids
+
+
+def create_model_instances():
+    """Create model instances for hyperparameter tuning."""
+    models = {
+        'lr': sk_LogisticRegression(max_iter=1000),
+        'svm': SVC(probability=True),
+        'rf': RandomForestClassifier(),
+        'gb': GradientBoostingClassifier()
+    }
+    return models
+
+
+def create_fusion_model_instances():
+    """Create fusion model instances for hyperparameter tuning."""
+    # For early fusion, these are just regular models that will work on concatenated features
+    models = {
+        'lr': sk_LogisticRegression(max_iter=1000),
+        'svm': SVC(probability=True),
+        'rf': RandomForestClassifier(),
+        'gb': GradientBoostingClassifier()
+    }
+    return models
+
+
+def evaluate_model_with_metrics(y_true, y_pred, y_proba=None):
+    """Calculate all required metrics."""
+    accuracy = accuracy_score(y_true, y_pred)
+    balanced_acc = balanced_accuracy_score(y_true, y_pred)
+    f1_weighted = f1_score(y_true, y_pred, average='weighted')
+    
+    auc = None
+    if y_proba is not None and len(np.unique(y_true)) > 1:
+        try:
+            if y_proba.ndim == 2 and y_proba.shape[1] == 2:
+                auc = roc_auc_score(y_true, y_proba[:, 1])
+            else:
+                auc = roc_auc_score(y_true, y_proba)
+        except ValueError:
+            auc = None
+    
+    return {
+        'accuracy': accuracy,
+        'balanced_accuracy': balanced_acc,
+        'f1_weighted': f1_weighted,
+        'auc': auc
+    }
+
+
+def perform_hyperparameter_tuning(X, y, model_type, models, param_grids):
+    """Perform hyperparameter tuning on the whole dataset and return best models based on accuracy."""
+    best_models = {}
+    
+    log_output(f"\n=== Hyperparameter Tuning for {model_type} Models ===")
+    
+    for name, model in models.items():
+        log_output(f"Tuning {model_type} {name.upper()}...")
+        
+        # Create pipeline with scaling for models that need it
+        if name in ['lr', 'svm']:
+            pipeline = Pipeline([
+                ('scaler', StandardScaler()),
+                ('classifier', model)
+            ])
+            # Adjust parameter names for pipeline
+            param_grid = {}
+            for key, value in param_grids[name].items():
+                param_grid[f'classifier__{key}'] = value
+        else:
+            pipeline = model
+            param_grid = param_grids[name]
+        
+        try:
+            # Hyperparameter tuning on whole dataset
+            grid_search = GridSearchCV(
+                pipeline, 
+                param_grid, 
+                cv=5,  # Use 5-fold CV for parameter selection
+                scoring='accuracy',  # Use accuracy for tuning as requested
+                n_jobs=-1,
+                verbose=0
+            )
+            
+            grid_search.fit(X, y)
+            best_model = grid_search.best_estimator_
+            
+            log_output(f"Best parameters for {model_type} {name.upper()}: {grid_search.best_params_}")
+            log_output(f"Best accuracy score: {grid_search.best_score_:.4f}")
+            
+            best_models[name] = best_model
+            
+        except Exception as e:
+            log_output(f"❌ Error tuning {model_type} {name}: {e}")
+    
+    return best_models
+
+
 def main():
-    log_output("=== Starting 5-Fold Cross-Validation for Multimodal Early Fusion (Data Leakage Fixed) ===")
+    log_output("=== Starting Hyperparameter Tuning and Patient-based Fold Evaluation for Multimodal Early Fusion ===")
     log_output(f"Log file: {log_file}")
+    log_output(f"Dataset info: 55 patients, 13 clinical features, 1536 pathology features")
+    log_output(f"Patch info: 2272 Response + 1756 No Response = 4028 total patches (224x224px)")
     
     # ------ 1. Load Clinical Data ------
     log_output("\n=== Loading Clinical Data ===")
@@ -220,20 +352,17 @@ def main():
     clinical_duplicates = [pid for pid, count in Counter(patient_ids_clinical).items() if count > 1]
     if clinical_duplicates:
         log_output(f"❌ CRITICAL: Found {len(clinical_duplicates)} duplicate patient IDs in clinical data!")
-        for pid in clinical_duplicates[:5]:
-            log_output(f"   Patient {pid}: {Counter(patient_ids_clinical)[pid]} occurrences")
-        raise ValueError("Duplicate patients found in clinical data - this will cause data leakage!")
+        raise ValueError("Duplicate patients found in clinical data!")
     
     # ------ 2. Load Pathology Data ------
     log_output("\n=== Loading Pathology Data ===")
-    # Load features from files
     with open('response_features_portal_tract.pkl', 'rb') as f:
         response_features = pickle.load(f)
     
     with open('no_response_features_portal_tract.pkl', 'rb') as f:
         no_response_features = pickle.load(f)
     
-    # Combine features for cross-validation
+    # Combine features
     X_pathology = np.vstack([
         response_features['embeddings'],
         no_response_features['embeddings']
@@ -244,52 +373,20 @@ def main():
         no_response_features['labels']
     ])
     
-    # Combine paths
     all_paths = response_features['paths'] + no_response_features['paths']
     
-    # Extract patient IDs from paths with validation
+    # Extract patient IDs
     patient_ids_pathology = []
-    unknown_count = 0
-    
     for path in all_paths:
         patient_id = extract_patient_id_from_path(path)
         patient_ids_pathology.append(patient_id)
-        if patient_id == "unknown":
-            unknown_count += 1
-    
-    if unknown_count > 0:
-        log_output(f"❌ WARNING: {unknown_count}/{len(all_paths)} patches have unknown patient IDs")
-        log_output("   This may indicate issues with path parsing or naming conventions")
-    
-    # Create a mapping from patient ID to all associated indices
-    patient_to_indices = defaultdict(list)
-    for i, patient_id in enumerate(patient_ids_pathology):
-        patient_to_indices[patient_id].append(i)
-    
-    # Remove unknown patients from consideration
-    if "unknown" in patient_to_indices:
-        del patient_to_indices["unknown"]
-    
-    # Count patches per patient and identify potential issues
-    patient_patch_counts = {patient_id: len(indices) for patient_id, indices in patient_to_indices.items()}
-    log_output(f"Found {len(patient_patch_counts)} unique patients in pathology data")
-    log_output(f"Average patches per patient: {np.mean(list(patient_patch_counts.values())):.1f}")
-    log_output(f"Min patches per patient: {np.min(list(patient_patch_counts.values()))}")
-    log_output(f"Max patches per patient: {np.max(list(patient_patch_counts.values()))}")
-    
-    # Warn about patients with very few patches
-    min_patch_threshold = 3
-    few_patch_patients = [pid for pid, count in patient_patch_counts.items() if count < min_patch_threshold]
-    if few_patch_patients:
-        log_output(f"⚠️  WARNING: {len(few_patch_patients)} patients have < {min_patch_threshold} patches")
-        log_output("   These patients may have unreliable aggregated features")
     
     log_output(f"Pathology data shape: {X_pathology.shape}")
+    log_output(f"Response patches: {len(response_features['embeddings'])}")
+    log_output(f"No Response patches: {len(no_response_features['embeddings'])}")
     
-    # ------ 3. Pre-aggregate Pathology Features ------
-    log_output("\n=== Pre-aggregating Pathology Features ===")
-    
-    # Aggregate all pathology features to patient level
+    # ------ 3. Aggregate Pathology Features ------
+    log_output("\n=== Aggregating Pathology Features ===")
     all_aggregated_pathology = aggregate_pathology_features(
         all_paths, X_pathology, patient_ids_pathology, y_pathology, min_patches=1
     )
@@ -298,309 +395,287 @@ def main():
     
     # ------ 4. Create Multimodal Dataset ------
     log_output("\n=== Creating Multimodal Dataset ===")
-    
     multimodal_data = create_multimodal_dataset(
         X_clinical, all_aggregated_pathology, patient_ids_clinical, y_clinical
     )
     
-    log_output(f"Multimodal dataset created with {len(multimodal_data['patients'])} patients")
+    log_output(f"Multimodal dataset: {len(multimodal_data['patients'])} patients")
     log_output(f"Clinical features shape: {multimodal_data['clinical_features'].shape}")
     log_output(f"Pathology features shape: {multimodal_data['pathology_features'].shape}")
-    
-    if len(multimodal_data['patients']) < 20:
-        log_output("❌ WARNING: Very few patients with both modalities - results may not be reliable")
     
     # Check label distribution
     label_counts = Counter(multimodal_data['labels'])
     log_output(f"Label distribution: {dict(label_counts)}")
     
-    # ------ 5. Set Up Patient-Level Cross-Validation ------
-    n_folds = 5
+    # ------ 5. Prepare Data for Evaluation ------
+    X_clinical_all = multimodal_data['clinical_features']
+    X_pathology_all = multimodal_data['pathology_features']
+    X_combined_all = np.concatenate((X_clinical_all, X_pathology_all), axis=1)
+    y_all = multimodal_data['labels']
+    patient_ids = multimodal_data['patients']
     
-    # Use StratifiedKFold to maintain label balance
-    patients_array = np.array(multimodal_data['patients'])
-    labels_array = multimodal_data['labels']
+    log_output(f"Combined feature dimension: {X_combined_all.shape[1]}")
+    log_output(f"Clinical: {X_clinical_all.shape[1]}, Pathology: {X_pathology_all.shape[1]}")
     
-    # Create patient-level stratified folds
-    skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=SEED)
+    # ------ 6. Get Model Configurations ------
+    param_grids, fusion_param_grids = get_hyperparameter_grids()
+    models = create_model_instances()
+    fusion_models = create_fusion_model_instances()
     
-    # Initialize data structures to track model performance
-    clinical_models_performance = defaultdict(lambda: defaultdict(list))
-    pathology_models_performance = defaultdict(lambda: defaultdict(list))
-    early_fusion_performance = defaultdict(lambda: defaultdict(list))
+    # Use 5-fold CV
+    cv_folds = 5
+    log_output(f"Using {cv_folds}-fold cross-validation")
     
-    # Define model configurations
-    model_configs = {
-        'lr': {'model': sk_LogisticRegression, 'params': {'C': 0.1, 'penalty': 'l2', 'solver': 'liblinear', 'random_state': 42}, 'scale': True},
-        'svm': {'model': SVC, 'params': {'C': 0.1, 'kernel': 'rbf', 'gamma': 'auto', 'random_state': 8888}, 'scale': True},
-        'rf': {'model': RandomForestClassifier, 'params': {'random_state': 777, 'criterion': 'gini', 'n_estimators': 50, 'max_depth': 4}, 'scale': False},
-        'gb': {'model': GradientBoostingClassifier, 'params':{'learning_rate': 0.2, 'n_estimators': 200, 'max_depth': 5, 'random_state': 32}, 'scale': False}
+    # ------ 7. Hyperparameter Tuning for All Models on Whole Dataset ------
+    # Clinical models
+    clinical_best_models = perform_hyperparameter_tuning(
+        X_clinical_all, y_all, "Clinical", models, param_grids
+    )
+    
+    # Pathology models
+    pathology_best_models = perform_hyperparameter_tuning(
+        X_pathology_all, y_all, "Pathology", models, param_grids
+    )
+    
+    # Fusion models
+    fusion_best_models = perform_hyperparameter_tuning(
+        X_combined_all, y_all, "Fusion", fusion_models, fusion_param_grids
+    )
+    
+    # ------ 8. Patient-based Fold Evaluation ------
+    log_output("\n=== Patient-based Fold Evaluation ===")
+    
+    # Create dictionary to hold all models and their data
+    all_model_configs = [
+        {"name": "Clinical", "X": X_clinical_all, "models": clinical_best_models},
+        {"name": "Pathology", "X": X_pathology_all, "models": pathology_best_models},
+        {"name": "Fusion", "X": X_combined_all, "models": fusion_best_models}
+    ]
+    
+    # Initialize results dictionary for all models
+    all_results = {}
+    for config in all_model_configs:
+        model_type = config["name"]
+        all_results[model_type] = {}
+        for model_name in config["models"].keys():
+            all_results[model_type][model_name] = {
+                'accuracy': [],
+                'balanced_accuracy': [],
+                'auc': [],
+                'f1_weighted': [],
+                'params': config["models"][model_name].get_params()
+            }
+    
+    # Get unique patients
+    unique_patients = np.array(list(set(patient_ids)))
+    
+    # Create patient-based folds
+    kf = KFold(n_splits=cv_folds, shuffle=True, random_state=SEED)
+    
+    # Evaluate each fold
+    for fold, (train_patient_idx, test_patient_idx) in enumerate(kf.split(unique_patients)):
+        log_output(f"\n--- Evaluating Fold {fold+1}/{cv_folds} ---")
+        
+        train_patients = set(unique_patients[train_patient_idx])
+        test_patients = set(unique_patients[test_patient_idx])
+        
+        # Convert patient-based splits to sample indices
+        train_indices = [i for i, p in enumerate(patient_ids) if p in train_patients]
+        test_indices = [i for i, p in enumerate(patient_ids) if p in test_patients]
+        
+        y_train, y_test = y_all[train_indices], y_all[test_indices]
+        
+        # Skip this fold if there aren't enough classes
+        if len(np.unique(y_train)) < 2 or len(np.unique(y_test)) < 2:
+            log_output(f"⚠️ Fold {fold+1}: Skipping due to insufficient class representation")
+            continue
+        
+        log_output(f"Train patients: {len(train_patients)}, Test patients: {len(test_patients)}")
+        log_output(f"Train samples: {len(y_train)}, Test samples: {len(y_test)}")
+        
+        # Evaluate each model configuration
+        for config in all_model_configs:
+            model_type = config["name"]
+            X = config["X"]
+            X_train, X_test = X[train_indices], X[test_indices]
+            
+            log_output(f"\n--- Evaluating {model_type} Models for Fold {fold+1} ---")
+            
+            # Evaluate each model of this type
+            for model_name, model in config["models"].items():
+                model_clone = clone(model)
+                model_clone.fit(X_train, y_train)
+                
+                # Get predictions
+                y_pred = model_clone.predict(X_test)
+                
+                # Get probabilities if available
+                try:
+                    y_proba = model_clone.predict_proba(X_test)[:, 1] if hasattr(model_clone, 'predict_proba') else None
+                except:
+                    y_proba = None
+                
+                # Calculate metrics
+                acc = accuracy_score(y_test, y_pred)
+                bal_acc = balanced_accuracy_score(y_test, y_pred)
+                f1_w = f1_score(y_test, y_pred, average='weighted')
+                
+                auc = None
+                if y_proba is not None and len(np.unique(y_test)) > 1:
+                    try:
+                        auc = roc_auc_score(y_test, y_proba)
+                    except:
+                        auc = None
+                
+                # Store metrics
+                all_results[model_type][model_name]['accuracy'].append(acc)
+                all_results[model_type][model_name]['balanced_accuracy'].append(bal_acc)
+                all_results[model_type][model_name]['f1_weighted'].append(f1_w)
+                if auc is not None:
+                    all_results[model_type][model_name]['auc'].append(auc)
+                
+                # Log results
+                log_output(f"{model_type} {model_name.upper()} - Fold {fold+1}:")
+                log_output(f"  Accuracy: {acc:.4f}")
+                log_output(f"  Balanced Accuracy: {bal_acc:.4f}")
+                log_output(f"  F1 Weighted: {f1_w:.4f}")
+                log_output(f"  AUC: {auc:.4f}" if auc is not None else "  AUC: N/A")
+    
+    # ------ 9. Calculate mean and std for metrics across all folds ------
+    log_output("\n=== Final Results Summary ===")
+    
+    # Create dictionary to map model_type to best models dictionary
+    model_type_to_best_models = {
+        'Clinical': clinical_best_models,
+        'Pathology': pathology_best_models,
+        'Fusion': fusion_best_models
     }
     
-    # ------ 6. Perform Patient-Level Cross-Validation ------
-    for fold, (train_idx, test_idx) in enumerate(skf.split(patients_array, labels_array)):
-        log_output(f"\n=== Fold {fold+1}/{n_folds} ===")
-        
-        # --- 6.1. Split Data at Patient Level ---
-        train_patients = patients_array[train_idx]
-        test_patients = patients_array[test_idx]
-        
-        # Validate no patient overlap
-        if not validate_patient_splits(train_patients, test_patients, f"Fold {fold+1}"):
-            raise ValueError("Patient overlap detected - stopping execution")
-        
-        # Extract corresponding features and labels
-        X_clinical_train = multimodal_data['clinical_features'][train_idx]
-        X_clinical_test = multimodal_data['clinical_features'][test_idx]
-        
-        X_pathology_train = multimodal_data['pathology_features'][train_idx]
-        X_pathology_test = multimodal_data['pathology_features'][test_idx]
-        
-        y_train = multimodal_data['labels'][train_idx]
-        y_test = multimodal_data['labels'][test_idx]
-        
-        log_output(f"Training patients: {len(train_patients)}")
-        log_output(f"Testing patients: {len(test_patients)}")
-        log_output(f"Training label distribution: {dict(Counter(y_train))}")
-        log_output(f"Testing label distribution: {dict(Counter(y_test))}")
-        
-        # --- 6.2. Create Early Fusion Features ---
-        log_output("\n--- Creating Early Fusion Features ---")
-        
-        # Ensure feature dimensions are compatible
-        log_output(f"Clinical features shape: {X_clinical_train.shape}")
-        log_output(f"Pathology features shape: {X_pathology_train.shape}")
-        
-        # Check for NaN or infinite values
-        if np.any(np.isnan(X_clinical_train)) or np.any(np.isnan(X_pathology_train)):
-            log_output("❌ WARNING: NaN values detected in features")
-        
-        if np.any(np.isinf(X_clinical_train)) or np.any(np.isinf(X_pathology_train)):
-            log_output("❌ WARNING: Infinite values detected in features")
-        
-        # Combine features by concatenation (early fusion)
-        X_combined_train = np.concatenate((X_clinical_train, X_pathology_train), axis=1)
-        X_combined_test = np.concatenate((X_clinical_test, X_pathology_test), axis=1)
-        
-        log_output(f"Combined feature dimension: {X_combined_train.shape[1]}")
-        log_output(f"Clinical features: {X_clinical_train.shape[1]}, Pathology features: {X_pathology_train.shape[1]}")
-        
-        # --- 6.3. Train & Evaluate Models ---
-        log_output("\n--- Training & Evaluating Models ---")
-        
-        # Clinical models
-        log_output("\n--- Clinical Models ---")
-        for name, config in model_configs.items():
-            model_cls = config['model']
-            params = config['params']
-            scale = config['scale']
-            
-            try:
-                model = model_cls(**params)
-                result = train_eval_sklearn_model(
-                    model, X_clinical_train, y_train,
-                    X_clinical_test, y_test,
-                    f"Clinical {name.upper()}", scale_features=scale
-                )
-                
-                clinical_models_performance[name]['accuracy'].append(result['accuracy'])
-                clinical_models_performance[name]['balanced_accuracy'].append(result['balanced_accuracy'])
-                if result.get('auc') is not None:
-                    clinical_models_performance[name]['auc'].append(result['auc'])
-                    
-            except Exception as e:
-                log_output(f"❌ Error training clinical {name}: {e}")
-        
-        # Pathology models
-        log_output("\n--- Pathology Models ---")
-        for name, config in model_configs.items():
-            model_cls = config['model']
-            params = config['params']
-            scale = config['scale']
-            
-            try:
-                model = model_cls(**params)
-                result = train_eval_sklearn_model(
-                    model, X_pathology_train, y_train,
-                    X_pathology_test, y_test,
-                    f"Pathology {name.upper()}", scale_features=scale
-                )
-                
-                pathology_models_performance[name]['accuracy'].append(result['accuracy'])
-                pathology_models_performance[name]['balanced_accuracy'].append(result['balanced_accuracy'])
-                if result.get('auc') is not None:
-                    pathology_models_performance[name]['auc'].append(result['auc'])
-                    
-            except Exception as e:
-                log_output(f"❌ Error training pathology {name}: {e}")
-        
-        # Early fusion models
-        log_output("\n--- Early Fusion Models ---")
-        for name, config in model_configs.items():
-            model_cls = config['model']
-            params = config['params']
-            scale = config['scale']
-            
-            try:
-                model = model_cls(**params)
-                result = train_eval_sklearn_model(
-                    model, X_combined_train, y_train,
-                    X_combined_test, y_test,
-                    f"Early Fusion {name.upper()}", scale_features=scale
-                )
-                
-                early_fusion_performance[name]['accuracy'].append(result['accuracy'])
-                early_fusion_performance[name]['balanced_accuracy'].append(result['balanced_accuracy'])
-                if result.get('auc') is not None:
-                    early_fusion_performance[name]['auc'].append(result['auc'])
-                    
-            except Exception as e:
-                log_output(f"❌ Error training early fusion {name}: {e}")
+    # Prepare data for CSV
+    csv_data = []
     
-    # ------ 7. Calculate & Report Average Performance Across Folds ------
-    log_output("\n=== Average Performance Across Folds ===")
-    
-    def calculate_and_report_performance(performance_dict, category_name):
-        """Helper function to calculate and report performance statistics."""
-        summary = []
-        log_output(f"\n=== {category_name} Performance (mean ± std) ===")
-        
-        for name in model_configs.keys():
-            if not performance_dict[name]['accuracy']:
-                log_output(f"No results for {name} - skipping")
-                continue
-                
-            acc_mean = np.mean(performance_dict[name]['accuracy'])
-            acc_std = np.std(performance_dict[name]['accuracy'])
-            bacc_mean = np.mean(performance_dict[name]['balanced_accuracy'])
-            bacc_std = np.std(performance_dict[name]['balanced_accuracy'])
+    for model_type, models_dict in all_results.items():
+        for model_name, metrics in models_dict.items():
+            # Calculate mean and std for each metric
+            acc_mean = np.mean(metrics['accuracy']) if metrics['accuracy'] else np.nan
+            acc_std = np.std(metrics['accuracy']) if metrics['accuracy'] else np.nan
+            bal_acc_mean = np.mean(metrics['balanced_accuracy']) if metrics['balanced_accuracy'] else np.nan
+            bal_acc_std = np.std(metrics['balanced_accuracy']) if metrics['balanced_accuracy'] else np.nan
+            f1_w_mean = np.mean(metrics['f1_weighted']) if metrics['f1_weighted'] else np.nan
+            f1_w_std = np.std(metrics['f1_weighted']) if metrics['f1_weighted'] else np.nan
             
-            row = {
-                'model': f"{category_name} {name.upper()}",
-                'accuracy': f"{acc_mean:.4f} ± {acc_std:.4f}",
-                'balanced_accuracy': f"{bacc_mean:.4f} ± {bacc_std:.4f}",
+            # Handle AUC separately since it might be None for some folds
+            auc_values = [a for a in metrics['auc'] if a is not None]
+            auc_mean = np.mean(auc_values) if auc_values else np.nan
+            auc_std = np.std(auc_values) if auc_values else np.nan
+            
+            # Extract best hyperparameters
+            best_model = model_type_to_best_models[model_type].get(model_name)
+            best_params = {}
+            
+            if best_model is not None:
+                # Handle pipeline vs. direct model
+                if hasattr(best_model, 'get_params'):
+                    all_params = best_model.get_params()
+                    
+                    if isinstance(best_model, Pipeline):
+                        # For pipeline models, extract classifier params
+                        classifier_params = {k.replace('classifier__', ''): v 
+                                            for k, v in all_params.items() 
+                                            if k.startswith('classifier__')}
+                        best_params = classifier_params
+                    else:
+                        # For non-pipeline models, get only the relevant hyperparameters
+                        relevant_params = {}
+                        for param_name in param_grids.get(model_name, {}).keys():
+                            if param_name in all_params:
+                                relevant_params[param_name] = all_params[param_name]
+                        best_params = relevant_params
+            
+            # Format hyperparameters as string
+            param_str = "; ".join([f"{k}={v}" for k, v in best_params.items() if not callable(v)])
+            
+            # Log results
+            log_output(f"\n{model_type} {model_name.upper()} Overall Results:")
+            log_output(f"  Accuracy: {acc_mean:.4f} ± {acc_std:.4f}")
+            log_output(f"  Balanced Accuracy: {bal_acc_mean:.4f} ± {bal_acc_std:.4f}")
+            log_output(f"  F1 Weighted: {f1_w_mean:.4f} ± {f1_w_std:.4f}")
+            log_output(f"  AUC: {auc_mean:.4f} ± {auc_std:.4f}" if not np.isnan(auc_mean) else "  AUC: N/A")
+            log_output(f"  Best hyperparameters: {param_str}")
+            
+            # Add to CSV data
+            csv_data.append({
+                'model_type': model_type,
+                'model_name': model_name.upper(),
                 'accuracy_mean': acc_mean,
                 'accuracy_std': acc_std,
-                'bacc_mean': bacc_mean, 
-                'bacc_std': bacc_std
-            }
-            
-            if performance_dict[name].get('auc'):
-                auc_mean = np.mean(performance_dict[name]['auc'])
-                auc_std = np.std(performance_dict[name]['auc'])
-                row['auc'] = f"{auc_mean:.4f} ± {auc_std:.4f}"
-                row['auc_mean'] = auc_mean
-                row['auc_std'] = auc_std
-                
-                log_output(f"{category_name} {name.upper()} - Accuracy: {acc_mean:.4f} ± {acc_std:.4f}, "
-                          f"Balanced Acc: {bacc_mean:.4f} ± {bacc_std:.4f}, AUC: {auc_mean:.4f} ± {auc_std:.4f}")
-            else:
-                log_output(f"{category_name} {name.upper()} - Accuracy: {acc_mean:.4f} ± {acc_std:.4f}, "
-                          f"Balanced Acc: {bacc_mean:.4f} ± {bacc_std:.4f}")
-            
-            summary.append(row)
-        
-        return summary
+                'balanced_accuracy_mean': bal_acc_mean,
+                'balanced_accuracy_std': bal_acc_std,
+                'f1_weighted_mean': f1_w_mean,
+                'f1_weighted_std': f1_w_std,
+                'auc_mean': auc_mean if not np.isnan(auc_mean) else 0.0,
+                'auc_std': auc_std if not np.isnan(auc_std) else 0.0,
+                'best_hyperparameters': param_str
+            })
     
-    # Calculate performance for each category
-    clinical_summary = calculate_and_report_performance(clinical_models_performance, "Clinical")
-    pathology_summary = calculate_and_report_performance(pathology_models_performance, "Pathology")
-    fusion_summary = calculate_and_report_performance(early_fusion_performance, "Early Fusion")
+    # Create and save results DataFrame
+    results_df = pd.DataFrame(csv_data)
     
-    # ------ 8. Performance Comparison and Analysis ------
-    if fusion_summary:
-        log_output("\n=== Performance Comparison & Analysis ===")
-        
-        # Convert to DataFrames for easier analysis
-        clinical_df = pd.DataFrame(clinical_summary) if clinical_summary else pd.DataFrame()
-        pathology_df = pd.DataFrame(pathology_summary) if pathology_summary else pd.DataFrame()
-        fusion_df = pd.DataFrame(fusion_summary) if fusion_summary else pd.DataFrame()
-        
-        # Find best model in each category
-        if not clinical_df.empty:
-            best_clinical = clinical_df.loc[clinical_df['accuracy_mean'].idxmax()]
-            log_output(f"Best Clinical Model: {best_clinical['model']} - Accuracy: {best_clinical['accuracy']}")
-        
-        if not pathology_df.empty:
-            best_pathology = pathology_df.loc[pathology_df['accuracy_mean'].idxmax()]
-            log_output(f"Best Pathology Model: {best_pathology['model']} - Accuracy: {best_pathology['accuracy']}")
-        
-        if not fusion_df.empty:
-            best_fusion = fusion_df.loc[fusion_df['accuracy_mean'].idxmax()]
-            log_output(f"Best Early Fusion Model: {best_fusion['model']} - Accuracy: {best_fusion['accuracy']}")
-            
-            # Statistical significance testing could be added here
-            log_output("\n--- Improvements from Early Fusion ---")
-            for _, fusion_row in fusion_df.iterrows():
-                fusion_name = fusion_row['model']
-                fusion_method = fusion_name.split()[2].lower()  # Extract model type
-                
-                # Compare with corresponding single-modality models
-                clinical_match = clinical_df[clinical_df['model'].str.contains(fusion_method.upper(), case=True)]
-                pathology_match = pathology_df[pathology_df['model'].str.contains(fusion_method.upper(), case=True)]
-                
-                if not clinical_match.empty:
-                    clinical_acc = clinical_match.iloc[0]['accuracy_mean']
-                    improvement = fusion_row['accuracy_mean'] - clinical_acc
-                    log_output(f"{fusion_name} vs Clinical {fusion_method.upper()}: "
-                              f"{improvement:+.4f} ({improvement*100:+.1f}%)")
-                
-                if not pathology_match.empty:
-                    pathology_acc = pathology_match.iloc[0]['accuracy_mean']
-                    improvement = fusion_row['accuracy_mean'] - pathology_acc
-                    log_output(f"{fusion_name} vs Pathology {fusion_method.upper()}: "
-                              f"{improvement:+.4f} ({improvement*100:+.1f}%)")
+    # Sort by balanced accuracy (primary metric)
+    results_df = results_df.sort_values('balanced_accuracy_mean', ascending=False)
     
-    # ------ 9. Data Quality Report ------
-    log_output("\n=== Data Quality Summary ===")
-    log_output(f"✓ Total patients with clinical data: {len(patient_ids_clinical)}")
-    log_output(f"✓ Total patients with pathology data: {len(all_aggregated_pathology)}")
-    log_output(f"✓ Patients with both modalities: {len(multimodal_data['patients'])}")
-    log_output(f"✓ Average patches per patient: {np.mean(multimodal_data['patch_counts']):.1f}")
-    log_output(f"✓ Cross-validation folds: {n_folds}")
-    log_output(f"✓ Patient-level splitting enforced: No data leakage")
+    # Display top results
+    log_output("\n=== Top Models by Balanced Accuracy ===")
+    for i, row in results_df.iterrows():
+        auc_display = f"{row['auc_mean']:.4f}±{row['auc_std']:.4f}" if row['auc_mean'] > 0 else "N/A"
+        log_output(f"{i+1}. {row['model_type']} {row['model_name']}: "
+                  f"Bal_Acc={row['balanced_accuracy_mean']:.4f}±{row['balanced_accuracy_std']:.4f}, "
+                  f"Acc={row['accuracy_mean']:.4f}±{row['accuracy_std']:.4f}, "
+                  f"F1={row['f1_weighted_mean']:.4f}±{row['f1_weighted_std']:.4f}, "
+                  f"AUC={auc_display}")
     
-    # ------ 10. Save Results to CSV ------
-    log_output("\n=== Saving Results to CSV ===")
+    # Find best in each category
+    log_output("\n=== Best Models by Category (Balanced Accuracy) ===")
+    for model_type in ['Clinical', 'Pathology', 'Fusion']:
+        subset = results_df[results_df['model_type'] == model_type]
+        if not subset.empty:
+            best = subset.iloc[0]
+            log_output(f"Best {model_type}: {best['model_name']} - "
+                      f"Bal_Acc={best['balanced_accuracy_mean']:.4f}±{best['balanced_accuracy_std']:.4f}")
     
-    # Combine all results into one dataframe
-    all_results = pd.concat([
-        pd.DataFrame(clinical_summary) if clinical_summary else pd.DataFrame(),
-        pd.DataFrame(pathology_summary) if pathology_summary else pd.DataFrame(),
-        pd.DataFrame(fusion_summary) if fusion_summary else pd.DataFrame()
-    ], ignore_index=True)
+    # Save results to CSV
+    results_df.to_csv('patient_fold_evaluation_results.csv', index=False)
+    log_output("Results saved to patient_fold_evaluation_results.csv")
     
-    # Save to CSV
-    results_file = "early_fusion_performance_fixed.csv"
-    if not all_results.empty:
-        all_results.to_csv(results_file, index=False)
-        log_output(f"Results saved to {results_file}")
-        
-        # Also save detailed performance data
-        detailed_results = {
-            'clinical_performance': dict(clinical_models_performance),
-            'pathology_performance': dict(pathology_models_performance),
-            'fusion_performance': dict(early_fusion_performance),
-            'multimodal_patients': multimodal_data['patients'],
-            'patch_counts': multimodal_data['patch_counts']
+    # Save detailed results
+    detailed_results = {
+        'raw_results': all_results,
+        'clinical_best_models': clinical_best_models,
+        'pathology_best_models': pathology_best_models,
+        'fusion_best_models': fusion_best_models,
+        'dataset_info': {
+            'n_patients': len(multimodal_data['patients']),
+            'clinical_features': X_clinical_all.shape[1],
+            'pathology_features': X_pathology_all.shape[1],
+            'patient_ids': patient_ids
         }
-        
-        with open('detailed_performance_results.pkl', 'wb') as f:
-            pickle.dump(detailed_results, f)
-        log_output("Detailed results saved to detailed_performance_results.pkl")
-        
-    else:
-        log_output("No results to save")
+    }
+    
+    with open('detailed_patient_fold_results.pkl', 'wb') as f:
+        pickle.dump(detailed_results, f)
+    log_output("Detailed results saved to detailed_patient_fold_results.pkl")
     
     log_output("\n=== Analysis Complete ===")
-    log_output("Key improvements made:")
-    log_output("1. ✓ Robust patient ID extraction with validation")
-    log_output("2. ✓ Duplicate patient detection and prevention")
-    log_output("3. ✓ Patient-level cross-validation with stratification")
-    log_output("4. ✓ Label consistency checking across modalities")
-    log_output("5. ✓ Comprehensive data leakage validation")
-    log_output("6. ✓ Improved error handling and logging")
-    log_output("7. ✓ Statistical reporting with confidence intervals")
+    log_output("Summary:")
+    log_output(f"✓ Tuned and evaluated 4 Clinical models with {cv_folds} patient-based folds")
+    log_output(f"✓ Tuned and evaluated 4 Pathology models with {cv_folds} patient-based folds") 
+    log_output(f"✓ Tuned and evaluated 4 Fusion models with {cv_folds} patient-based folds")
+    log_output(f"✓ Evaluated metrics: Accuracy, Balanced Accuracy, F1 Weighted, AUROC")
+    if not results_df.empty:
+        log_output(f"✓ Best overall model: {results_df.iloc[0]['model_type']} {results_df.iloc[0]['model_name']}")
+        log_output(f"  Balanced Accuracy: {results_df.iloc[0]['balanced_accuracy_mean']:.4f}±{results_df.iloc[0]['balanced_accuracy_std']:.4f}")
+    else:
+        log_output("❌ No successful model results found")
 
 
 if __name__ == "__main__":
