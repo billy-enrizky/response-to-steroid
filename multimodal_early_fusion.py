@@ -281,56 +281,47 @@ def evaluate_model_with_metrics(y_true, y_pred, y_proba=None):
     }
 
 
-def perform_hyperparameter_tuning(X, y, model_type, models, param_grids):
-    """Perform hyperparameter tuning on the whole dataset and return best models based on accuracy."""
-    best_models = {}
+def tune_hyperparameters_on_training_set(X_train, y_train, model_name, base_model, param_grid, inner_cv=3):
+    """Tune hyperparameters using only the training data with inner cross-validation."""
     
-    log_output(f"\n=== Hyperparameter Tuning for {model_type} Models ===")
+    # Create pipeline with scaling for models that need it
+    if model_name in ['lr', 'svm']:
+        pipeline = Pipeline([
+            ('scaler', StandardScaler()),
+            ('classifier', clone(base_model))
+        ])
+        # Adjust parameter names for pipeline
+        param_grid_adjusted = {}
+        for key, value in param_grid.items():
+            param_grid_adjusted[f'classifier__{key}'] = value
+    else:
+        pipeline = clone(base_model)
+        param_grid_adjusted = param_grid.copy()
     
-    for name, model in models.items():
-        log_output(f"Tuning {model_type} {name.upper()}...")
+    # Perform GridSearchCV on training data only
+    grid_search = GridSearchCV(
+        pipeline, 
+        param_grid_adjusted, 
+        cv=inner_cv,
+        scoring='balanced_accuracy',
+        n_jobs=-1,
+        verbose=0
+    )
+    
+    try:
+        grid_search.fit(X_train, y_train)
+        best_model = grid_search.best_estimator_
+        best_params = grid_search.best_params_
+        best_score = grid_search.best_score_
         
-        # Create pipeline with scaling for models that need it
-        if name in ['lr', 'svm']:
-            pipeline = Pipeline([
-                ('scaler', StandardScaler()),
-                ('classifier', model)
-            ])
-            # Adjust parameter names for pipeline
-            param_grid = {}
-            for key, value in param_grids[name].items():
-                param_grid[f'classifier__{key}'] = value
-        else:
-            pipeline = model
-            param_grid = param_grids[name]
-        
-        try:
-            # Hyperparameter tuning on whole dataset
-            grid_search = GridSearchCV(
-                pipeline, 
-                param_grid, 
-                cv=5,  # Use 5-fold CV for parameter selection
-                scoring='accuracy',  # Use accuracy for tuning as requested
-                n_jobs=-1,
-                verbose=0
-            )
-            
-            grid_search.fit(X, y)
-            best_model = grid_search.best_estimator_
-            
-            log_output(f"Best parameters for {model_type} {name.upper()}: {grid_search.best_params_}")
-            log_output(f"Best accuracy score: {grid_search.best_score_:.4f}")
-            
-            best_models[name] = best_model
-            
-        except Exception as e:
-            log_output(f"❌ Error tuning {model_type} {name}: {e}")
-    
-    return best_models
+        return best_model, best_params, best_score
+    except Exception as e:
+        log_output(f"❌ Error during hyperparameter tuning: {e}")
+        return None, {}, 0.0
 
 
 def main():
-    log_output("=== Starting Hyperparameter Tuning and Patient-based Fold Evaluation for Multimodal Early Fusion ===")
+    log_output("=== Starting Nested Cross-Validation for Multimodal Early Fusion ===")
     log_output(f"Log file: {log_file}")
     log_output(f"Dataset info: 55 patients, 13 clinical features, 1536 pathology features")
     log_output(f"Patch info: 2272 Response + 1756 No Response = 4028 total patches (224x224px)")
@@ -419,63 +410,46 @@ def main():
     
     # ------ 6. Get Model Configurations ------
     param_grids, fusion_param_grids = get_hyperparameter_grids()
-    models = create_model_instances()
-    fusion_models = create_fusion_model_instances()
+    base_models = create_model_instances()
+    fusion_base_models = create_fusion_model_instances()
     
-    # Use 5-fold CV
-    cv_folds = 5
-    log_output(f"Using {cv_folds}-fold cross-validation")
+    # Use 5-fold CV for outer loop
+    outer_cv_folds = 5
+    # Use 3-fold CV for inner hyperparameter tuning
+    inner_cv_folds = 3
+    log_output(f"Using {outer_cv_folds}-fold outer CV with {inner_cv_folds}-fold inner CV for hyperparameter tuning")
     
-    # ------ 7. Hyperparameter Tuning for All Models on Whole Dataset ------
-    # Clinical models
-    clinical_best_models = perform_hyperparameter_tuning(
-        X_clinical_all, y_all, "Clinical", models, param_grids
-    )
+    # ------ 7. Create Data Structure for Results ------
+    all_results = {
+        "Clinical": {model_name: {'accuracy': [], 'balanced_accuracy': [], 'auc': [], 'f1_weighted': [], 'best_params': []} 
+                    for model_name in base_models.keys()},
+        "Pathology": {model_name: {'accuracy': [], 'balanced_accuracy': [], 'auc': [], 'f1_weighted': [], 'best_params': []} 
+                     for model_name in base_models.keys()},
+        "Fusion": {model_name: {'accuracy': [], 'balanced_accuracy': [], 'auc': [], 'f1_weighted': [], 'best_params': []} 
+                  for model_name in fusion_base_models.keys()}
+    }
     
-    # Pathology models
-    pathology_best_models = perform_hyperparameter_tuning(
-        X_pathology_all, y_all, "Pathology", models, param_grids
-    )
-    
-    # Fusion models
-    fusion_best_models = perform_hyperparameter_tuning(
-        X_combined_all, y_all, "Fusion", fusion_models, fusion_param_grids
-    )
-    
-    # ------ 8. Patient-based Fold Evaluation ------
-    log_output("\n=== Patient-based Fold Evaluation ===")
-    
-    # Create dictionary to hold all models and their data
-    all_model_configs = [
-        {"name": "Clinical", "X": X_clinical_all, "models": clinical_best_models},
-        {"name": "Pathology", "X": X_pathology_all, "models": pathology_best_models},
-        {"name": "Fusion", "X": X_combined_all, "models": fusion_best_models}
-    ]
-    
-    # Initialize results dictionary for all models
-    all_results = {}
-    for config in all_model_configs:
-        model_type = config["name"]
-        all_results[model_type] = {}
-        for model_name in config["models"].keys():
-            all_results[model_type][model_name] = {
-                'accuracy': [],
-                'balanced_accuracy': [],
-                'auc': [],
-                'f1_weighted': [],
-                'params': config["models"][model_name].get_params()
-            }
-    
-    # Get unique patients
+    # Get unique patients for patient-based CV
     unique_patients = np.array(list(set(patient_ids)))
     
-    # Create patient-based folds
-    kf = KFold(n_splits=cv_folds, shuffle=True, random_state=SEED)
+    # Create patient-based folds for the outer CV
+    kf = KFold(n_splits=outer_cv_folds, shuffle=True, random_state=SEED)
     
-    # Evaluate each fold
+    # ------ 8. Perform Nested Cross Validation ------
+    log_output("\n=== Starting Nested Cross-Validation ===")
+    
+    # Define model configurations
+    model_configs = [
+        {"name": "Clinical", "X": X_clinical_all, "models": base_models, "param_grids": param_grids},
+        {"name": "Pathology", "X": X_pathology_all, "models": base_models, "param_grids": param_grids},
+        {"name": "Fusion", "X": X_combined_all, "models": fusion_base_models, "param_grids": fusion_param_grids}
+    ]
+    
+    # Outer CV loop
     for fold, (train_patient_idx, test_patient_idx) in enumerate(kf.split(unique_patients)):
-        log_output(f"\n--- Evaluating Fold {fold+1}/{cv_folds} ---")
+        log_output(f"\n=== Outer Fold {fold+1}/{outer_cv_folds} ===")
         
+        # Get patient IDs for this fold
         train_patients = set(unique_patients[train_patient_idx])
         test_patients = set(unique_patients[test_patient_idx])
         
@@ -485,77 +459,102 @@ def main():
         
         y_train, y_test = y_all[train_indices], y_all[test_indices]
         
-        # Skip this fold if there aren't enough classes
+        # Skip this fold if there aren't enough classes in train or test
         if len(np.unique(y_train)) < 2 or len(np.unique(y_test)) < 2:
             log_output(f"⚠️ Fold {fold+1}: Skipping due to insufficient class representation")
             continue
         
         log_output(f"Train patients: {len(train_patients)}, Test patients: {len(test_patients)}")
-        log_output(f"Train samples: {len(y_train)}, Test samples: {len(y_test)}")
+        log_output(f"Train samples: {len(train_indices)}, Test samples: {len(test_indices)}")
+        log_output(f"Train label distribution: {dict(Counter(y_train))}")
+        log_output(f"Test label distribution: {dict(Counter(y_test))}")
         
-        # Evaluate each model configuration
-        for config in all_model_configs:
+        # Process each model configuration
+        for config in model_configs:
             model_type = config["name"]
             X = config["X"]
             X_train, X_test = X[train_indices], X[test_indices]
             
-            log_output(f"\n--- Evaluating {model_type} Models for Fold {fold+1} ---")
+            log_output(f"\n--- Processing {model_type} Models for Fold {fold+1} ---")
             
-            # Evaluate each model of this type
-            for model_name, model in config["models"].items():
-                model_clone = clone(model)
-                model_clone.fit(X_train, y_train)
+            # For each model type
+            for model_name, base_model in config["models"].items():
+                log_output(f"  {model_type} {model_name.upper()} - Tuning hyperparameters...")
                 
-                # Get predictions
-                y_pred = model_clone.predict(X_test)
+                # Get parameter grid for this model
+                param_grid = config["param_grids"][model_name]
+                
+                # Tune hyperparameters on training data only with inner CV
+                best_model, best_params, best_score = tune_hyperparameters_on_training_set(
+                    X_train, y_train, model_name, base_model, param_grid, inner_cv=inner_cv_folds
+                )
+                
+                if best_model is None:
+                    log_output(f"  ❌ Failed to tune {model_type} {model_name.upper()}")
+                    continue
+                
+                # Extract hyperparameters for display
+                param_display = {}
+                if isinstance(best_model, Pipeline):
+                    # For pipeline models
+                    for key, value in best_params.items():
+                        if key.startswith('classifier__'):
+                            clean_key = key.replace('classifier__', '')
+                            param_display[clean_key] = value
+                else:
+                    # For direct models
+                    param_display = best_params
+                
+                log_output(f"  Best params: {param_display}")
+                log_output(f"  Best inner CV score: {best_score:.4f}")
+                
+                # Train best model on all training data
+                best_model.fit(X_train, y_train)
+                
+                # Get predictions on test data
+                y_pred = best_model.predict(X_test)
                 
                 # Get probabilities if available
                 try:
-                    y_proba = model_clone.predict_proba(X_test)[:, 1] if hasattr(model_clone, 'predict_proba') else None
+                    if hasattr(best_model, 'predict_proba'):
+                        y_proba = best_model.predict_proba(X_test)
+                        if y_proba.shape[1] == 2:  # Binary classification
+                            y_proba = y_proba[:, 1]
+                    else:
+                        y_proba = None
                 except:
                     y_proba = None
                 
                 # Calculate metrics
-                acc = accuracy_score(y_test, y_pred)
-                bal_acc = balanced_accuracy_score(y_test, y_pred)
-                f1_w = f1_score(y_test, y_pred, average='weighted')
+                metrics = evaluate_model_with_metrics(y_test, y_pred, y_proba)
                 
-                auc = None
-                if y_proba is not None and len(np.unique(y_test)) > 1:
-                    try:
-                        auc = roc_auc_score(y_test, y_proba)
-                    except:
-                        auc = None
+                # Store results
+                all_results[model_type][model_name]['accuracy'].append(metrics['accuracy'])
+                all_results[model_type][model_name]['balanced_accuracy'].append(metrics['balanced_accuracy'])
+                all_results[model_type][model_name]['f1_weighted'].append(metrics['f1_weighted'])
+                all_results[model_type][model_name]['best_params'].append(param_display)
                 
-                # Store metrics
-                all_results[model_type][model_name]['accuracy'].append(acc)
-                all_results[model_type][model_name]['balanced_accuracy'].append(bal_acc)
-                all_results[model_type][model_name]['f1_weighted'].append(f1_w)
-                if auc is not None:
-                    all_results[model_type][model_name]['auc'].append(auc)
+                if metrics['auc'] is not None:
+                    all_results[model_type][model_name]['auc'].append(metrics['auc'])
                 
-                # Log results
-                log_output(f"{model_type} {model_name.upper()} - Fold {fold+1}:")
-                log_output(f"  Accuracy: {acc:.4f}")
-                log_output(f"  Balanced Accuracy: {bal_acc:.4f}")
-                log_output(f"  F1 Weighted: {f1_w:.4f}")
-                log_output(f"  AUC: {auc:.4f}" if auc is not None else "  AUC: N/A")
+                # Log metrics for this fold
+                log_output(f"  {model_type} {model_name.upper()} - Fold {fold+1} Results:")
+                log_output(f"    Accuracy: {metrics['accuracy']:.4f}")
+                log_output(f"    Balanced Accuracy: {metrics['balanced_accuracy']:.4f}")
+                log_output(f"    F1 Weighted: {metrics['f1_weighted']:.4f}")
+                if metrics['auc'] is not None:
+                    log_output(f"    AUC: {metrics['auc']:.4f}")
+                else:
+                    log_output(f"    AUC: N/A")
     
-    # ------ 9. Calculate mean and std for metrics across all folds ------
+    # ------ 9. Calculate Summary Statistics ------
     log_output("\n=== Final Results Summary ===")
-    
-    # Create dictionary to map model_type to best models dictionary
-    model_type_to_best_models = {
-        'Clinical': clinical_best_models,
-        'Pathology': pathology_best_models,
-        'Fusion': fusion_best_models
-    }
     
     # Prepare data for CSV
     csv_data = []
     
-    for model_type, models_dict in all_results.items():
-        for model_name, metrics in models_dict.items():
+    for model_type in all_results.keys():
+        for model_name, metrics in all_results[model_type].items():
             # Calculate mean and std for each metric
             acc_mean = np.mean(metrics['accuracy']) if metrics['accuracy'] else np.nan
             acc_std = np.std(metrics['accuracy']) if metrics['accuracy'] else np.nan
@@ -569,31 +568,21 @@ def main():
             auc_mean = np.mean(auc_values) if auc_values else np.nan
             auc_std = np.std(auc_values) if auc_values else np.nan
             
-            # Extract best hyperparameters
-            best_model = model_type_to_best_models[model_type].get(model_name)
-            best_params = {}
+            # Count how many times each parameter value was selected
+            param_counts = defaultdict(lambda: defaultdict(int))
+            for params in metrics['best_params']:
+                for param_name, param_value in params.items():
+                    param_counts[param_name][param_value] += 1
             
-            if best_model is not None:
-                # Handle pipeline vs. direct model
-                if hasattr(best_model, 'get_params'):
-                    all_params = best_model.get_params()
-                    
-                    if isinstance(best_model, Pipeline):
-                        # For pipeline models, extract classifier params
-                        classifier_params = {k.replace('classifier__', ''): v 
-                                            for k, v in all_params.items() 
-                                            if k.startswith('classifier__')}
-                        best_params = classifier_params
-                    else:
-                        # For non-pipeline models, get only the relevant hyperparameters
-                        relevant_params = {}
-                        for param_name in param_grids.get(model_name, {}).keys():
-                            if param_name in all_params:
-                                relevant_params[param_name] = all_params[param_name]
-                        best_params = relevant_params
+            # Format most frequently selected parameters
+            top_params = {}
+            for param_name, value_counts in param_counts.items():
+                top_value = max(value_counts.items(), key=lambda x: x[1])[0]
+                top_count = value_counts[top_value]
+                total = sum(value_counts.values())
+                top_params[param_name] = f"{top_value} ({top_count}/{total})"
             
-            # Format hyperparameters as string
-            param_str = "; ".join([f"{k}={v}" for k, v in best_params.items() if not callable(v)])
+            param_str = "; ".join([f"{k}={v}" for k, v in top_params.items()])
             
             # Log results
             log_output(f"\n{model_type} {model_name.upper()} Overall Results:")
@@ -601,7 +590,7 @@ def main():
             log_output(f"  Balanced Accuracy: {bal_acc_mean:.4f} ± {bal_acc_std:.4f}")
             log_output(f"  F1 Weighted: {f1_w_mean:.4f} ± {f1_w_std:.4f}")
             log_output(f"  AUC: {auc_mean:.4f} ± {auc_std:.4f}" if not np.isnan(auc_mean) else "  AUC: N/A")
-            log_output(f"  Best hyperparameters: {param_str}")
+            log_output(f"  Most frequent hyperparameters: {param_str}")
             
             # Add to CSV data
             csv_data.append({
@@ -615,7 +604,7 @@ def main():
                 'f1_weighted_std': f1_w_std,
                 'auc_mean': auc_mean if not np.isnan(auc_mean) else 0.0,
                 'auc_std': auc_std if not np.isnan(auc_std) else 0.0,
-                'best_hyperparameters': param_str
+                'most_frequent_params': param_str
             })
     
     # Create and save results DataFrame
@@ -644,15 +633,12 @@ def main():
                       f"Bal_Acc={best['balanced_accuracy_mean']:.4f}±{best['balanced_accuracy_std']:.4f}")
     
     # Save results to CSV
-    results_df.to_csv('patient_fold_evaluation_results.csv', index=False)
-    log_output("Results saved to patient_fold_evaluation_results.csv")
+    results_df.to_csv('nested_cv_results.csv', index=False)
+    log_output("Results saved to nested_cv_results.csv")
     
     # Save detailed results
     detailed_results = {
         'raw_results': all_results,
-        'clinical_best_models': clinical_best_models,
-        'pathology_best_models': pathology_best_models,
-        'fusion_best_models': fusion_best_models,
         'dataset_info': {
             'n_patients': len(multimodal_data['patients']),
             'clinical_features': X_clinical_all.shape[1],
@@ -661,15 +647,14 @@ def main():
         }
     }
     
-    with open('detailed_patient_fold_results.pkl', 'wb') as f:
+    with open('detailed_nested_cv_results.pkl', 'wb') as f:
         pickle.dump(detailed_results, f)
-    log_output("Detailed results saved to detailed_patient_fold_results.pkl")
+    log_output("Detailed results saved to detailed_nested_cv_results.pkl")
     
     log_output("\n=== Analysis Complete ===")
     log_output("Summary:")
-    log_output(f"✓ Tuned and evaluated 4 Clinical models with {cv_folds} patient-based folds")
-    log_output(f"✓ Tuned and evaluated 4 Pathology models with {cv_folds} patient-based folds") 
-    log_output(f"✓ Tuned and evaluated 4 Fusion models with {cv_folds} patient-based folds")
+    log_output(f"✓ Performed nested {outer_cv_folds}-fold cross-validation with {inner_cv_folds}-fold inner CV")
+    log_output(f"✓ Evaluated 4 Clinical models, 4 Pathology models, and 4 Fusion models")
     log_output(f"✓ Evaluated metrics: Accuracy, Balanced Accuracy, F1 Weighted, AUROC")
     if not results_df.empty:
         log_output(f"✓ Best overall model: {results_df.iloc[0]['model_type']} {results_df.iloc[0]['model_name']}")
