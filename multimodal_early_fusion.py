@@ -415,8 +415,8 @@ def main():
     
     # Use 5-fold CV for outer loop
     outer_cv_folds = 5
-    # Use 3-fold CV for inner hyperparameter tuning
-    inner_cv_folds = 3
+    # Use 5-fold CV for inner hyperparameter tuning
+    inner_cv_folds = 5
     log_output(f"Using {outer_cv_folds}-fold outer CV with {inner_cv_folds}-fold inner CV for hyperparameter tuning")
     
     # ------ 7. Create Data Structure for Results ------
