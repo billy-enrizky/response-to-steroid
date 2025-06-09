@@ -1,0 +1,1993 @@
+=== Starting In-Fold Hyperparameter Tuned 5-Fold Cross-Validation for Multimodal Fusion ===
+Log file: infold_hypertuned_multimodal_fusion.log
+Dataset info: 55 patients, 13 clinical features, 1536 image features
+Pathology patches: 2272 Response + 1756 No Response = 4028 total
+Metrics: Accuracy, Balanced Accuracy, AUROC, F1 Weighted Score
+=== Hyperparameter tuning performed INSIDE EACH FOLD on training data only (4/5) ===
+
+=== Loading Clinical Data ===
+Clinical data shape: (55, 13)
+Number of patients in clinical data: 55
+
+=== Loading Pathology Data ===
+Pathology data shape: (4028, 1536)
+Number of patches: 4028
+
+=== Starting 5-Fold Cross-Validation with In-Fold Hyperparameter Tuning ===
+
+=== Fold 1/5 ===
+Splitting pathology data based on patient IDs...
+Pathology train set: 2945 patches
+Pathology test set: 1083 patches
+
+--- Tuning and Training Clinical Models on Fold Training Data ---
+
+Tuning Clinical LR on fold 1 training data...
+Starting hyperparameter search with 10 combinations...
+Best parameters for LogisticRegression: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Best CV score: 0.5950
+Clinical LR best params for fold 1: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Clinical LR - Accuracy: 0.3636, Balanced Acc: 0.2857, F1 Weighted: 0.3394
+Clinical LR - AUROC: 0.1071
+
+Tuning Clinical SVM on fold 1 training data...
+Starting hyperparameter search with 40 combinations...
+Best parameters for SVC: {'C': 1.0, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+Best CV score: 0.5900
+Clinical SVM best params for fold 1: {'C': 1.0, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+Clinical SVM - Accuracy: 0.3636, Balanced Acc: 0.2857, F1 Weighted: 0.3394
+Clinical SVM - AUROC: 0.9286
+
+Tuning Clinical RF on fold 1 training data...
+Starting hyperparameter search with 180 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': 3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}
+Best CV score: 0.6650
+Clinical RF best params for fold 1: {'max_depth': 3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}
+Clinical RF - Accuracy: 0.4545, Balanced Acc: 0.3571, F1 Weighted: 0.3977
+Clinical RF - AUROC: 0.4286
+
+Tuning Clinical GB on fold 1 training data...
+Starting hyperparameter search with 128 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.01, 'max_depth': 5, 'n_estimators': 50, 'subsample': 0.8}
+Best CV score: 0.6200
+Clinical GB best params for fold 1: {'learning_rate': 0.01, 'max_depth': 5, 'n_estimators': 50, 'subsample': 0.8}
+Clinical GB - Accuracy: 0.4545, Balanced Acc: 0.3571, F1 Weighted: 0.3977
+Clinical GB - AUROC: 0.2857
+
+--- Tuning and Training Pathology Models on Fold Training Data ---
+
+Tuning Pathology LR on fold 1 training data...
+Starting hyperparameter search with 24 combinations...
+Best parameters for LogisticRegression: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Best CV score: 0.8382
+Pathology LR best params for fold 1: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Pathology LR - Accuracy: 0.7119, Balanced Acc: 0.6759, F1 Weighted: 0.7018
+Pathology LR - AUROC: 0.7386
+
+Tuning Pathology SVM on fold 1 training data...
+Starting hyperparameter search with 60 combinations...
+Best parameters for SVC: {'C': 10.0, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+Best CV score: 0.9087
+Pathology SVM best params for fold 1: {'C': 10.0, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+Pathology SVM - Accuracy: 0.7765, Balanced Acc: 0.7428, F1 Weighted: 0.7683
+Pathology SVM - AUROC: 0.8583
+
+Tuning Pathology RF on fold 1 training data...
+Starting hyperparameter search with 320 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': None, 'min_samples_leaf': 1, 'min_samples_split': 5, 'n_estimators': 100}
+Best CV score: 0.7102
+Pathology RF best params for fold 1: {'max_depth': None, 'min_samples_leaf': 1, 'min_samples_split': 5, 'n_estimators': 100}
+Pathology RF - Accuracy: 0.6528, Balanced Acc: 0.6889, F1 Weighted: 0.6508
+Pathology RF - AUROC: 0.7686
+
+Tuning Pathology GB on fold 1 training data...
+Starting hyperparameter search with 192 combinations...
+=== Starting In-Fold Hyperparameter Tuned 5-Fold Cross-Validation for Multimodal Fusion ===
+Log file: infold_hypertuned_multimodal_fusion.log
+Dataset info: 55 patients, 13 clinical features, 1536 image features
+Pathology patches: 2272 Response + 1756 No Response = 4028 total
+Metrics: Accuracy, Balanced Accuracy, AUROC, F1 Weighted Score
+=== Hyperparameter tuning performed INSIDE EACH FOLD on training data only (4/5) ===
+
+=== Loading Clinical Data ===
+Clinical data shape: (55, 13)
+Number of patients in clinical data: 55
+
+=== Loading Pathology Data ===
+Pathology data shape: (4028, 1536)
+Number of patches: 4028
+
+=== Starting 5-Fold Cross-Validation with In-Fold Hyperparameter Tuning ===
+
+=== Fold 1/5 ===
+Splitting pathology data based on patient IDs...
+Pathology train set: 2945 patches
+Pathology test set: 1083 patches
+
+--- Tuning and Training Clinical Models on Fold Training Data ---
+
+Tuning Clinical LR on fold 1 training data...
+Starting hyperparameter search with 10 combinations...
+Best parameters for LogisticRegression: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Best CV score: 0.5950
+Clinical LR best params for fold 1: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Clinical LR - Accuracy: 0.3636, Balanced Acc: 0.2857, F1 Weighted: 0.3394
+Clinical LR - AUROC: 0.1071
+
+Tuning Clinical SVM on fold 1 training data...
+Starting hyperparameter search with 40 combinations...
+Best parameters for SVC: {'C': 1.0, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+Best CV score: 0.5900
+Clinical SVM best params for fold 1: {'C': 1.0, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+Clinical SVM - Accuracy: 0.3636, Balanced Acc: 0.2857, F1 Weighted: 0.3394
+Clinical SVM - AUROC: 0.9286
+
+Tuning Clinical RF on fold 1 training data...
+Starting hyperparameter search with 180 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': 3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}
+Best CV score: 0.6650
+Clinical RF best params for fold 1: {'max_depth': 3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}
+Clinical RF - Accuracy: 0.4545, Balanced Acc: 0.3571, F1 Weighted: 0.3977
+Clinical RF - AUROC: 0.4286
+
+Tuning Clinical GB on fold 1 training data...
+Starting hyperparameter search with 8 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 7, 'n_estimators': 100}
+Best CV score: 0.5950
+Clinical GB best params for fold 1: {'learning_rate': 0.1, 'max_depth': 7, 'n_estimators': 100}
+Clinical GB - Accuracy: 0.4545, Balanced Acc: 0.4107, F1 Weighted: 0.4545
+Clinical GB - AUROC: 0.4286
+
+--- Tuning and Training Pathology Models on Fold Training Data ---
+
+Tuning Pathology LR on fold 1 training data...
+Starting hyperparameter search with 24 combinations...
+Best parameters for LogisticRegression: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Best CV score: 0.8382
+Pathology LR best params for fold 1: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Pathology LR - Accuracy: 0.7119, Balanced Acc: 0.6759, F1 Weighted: 0.7018
+Pathology LR - AUROC: 0.7386
+
+Tuning Pathology SVM on fold 1 training data...
+Starting hyperparameter search with 60 combinations...
+Best parameters for SVC: {'C': 10.0, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+Best CV score: 0.9087
+Pathology SVM best params for fold 1: {'C': 10.0, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+Pathology SVM - Accuracy: 0.7765, Balanced Acc: 0.7428, F1 Weighted: 0.7683
+Pathology SVM - AUROC: 0.8583
+
+Tuning Pathology RF on fold 1 training data...
+Starting hyperparameter search with 320 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': None, 'min_samples_leaf': 1, 'min_samples_split': 5, 'n_estimators': 100}
+Best CV score: 0.7102
+Pathology RF best params for fold 1: {'max_depth': None, 'min_samples_leaf': 1, 'min_samples_split': 5, 'n_estimators': 100}
+Pathology RF - Accuracy: 0.6528, Balanced Acc: 0.6889, F1 Weighted: 0.6508
+Pathology RF - AUROC: 0.7686
+
+Tuning Pathology GB on fold 1 training data...
+Starting hyperparameter search with 8 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 7, 'n_estimators': 200}
+Best CV score: 0.8102
+Pathology GB best params for fold 1: {'learning_rate': 0.1, 'max_depth': 7, 'n_estimators': 200}
+Pathology GB - Accuracy: 0.7322, Balanced Acc: 0.7344, F1 Weighted: 0.7349
+Pathology GB - AUROC: 0.8110
+
+--- Aggregating Pathology Predictions at Slide Level for Each Model ---
+=== Starting In-Fold Hyperparameter Tuned 5-Fold Cross-Validation for Multimodal Fusion ===
+Log file: infold_hypertuned_multimodal_fusion.log
+Dataset info: 55 patients, 13 clinical features, 1536 image features
+Pathology patches: 2272 Response + 1756 No Response = 4028 total
+Metrics: Accuracy, Balanced Accuracy, AUROC, F1 Weighted Score
+=== Hyperparameter tuning performed INSIDE EACH FOLD on training data only (4/5) ===
+
+=== Loading Clinical Data ===
+Clinical data shape: (55, 13)
+Number of patients in clinical data: 55
+
+=== Loading Pathology Data ===
+Pathology data shape: (4028, 1536)
+Number of patches: 4028
+
+=== Starting 5-Fold Cross-Validation with In-Fold Hyperparameter Tuning ===
+
+=== Fold 1/5 ===
+Splitting pathology data based on patient IDs...
+Pathology train set: 2945 patches
+Pathology test set: 1083 patches
+
+--- Tuning and Training Clinical Models on Fold Training Data ---
+
+Tuning Clinical LR on fold 1 training data...
+Starting hyperparameter search with 10 combinations...
+Best parameters for LogisticRegression: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Best CV score: 0.5950
+Clinical LR best params for fold 1: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Clinical LR - Accuracy: 0.3636, Balanced Acc: 0.2857, F1 Weighted: 0.3394
+Clinical LR - AUROC: 0.1071
+
+Tuning Clinical SVM on fold 1 training data...
+Starting hyperparameter search with 40 combinations...
+Best parameters for SVC: {'C': 1.0, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+Best CV score: 0.5900
+Clinical SVM best params for fold 1: {'C': 1.0, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+Clinical SVM - Accuracy: 0.3636, Balanced Acc: 0.2857, F1 Weighted: 0.3394
+Clinical SVM - AUROC: 0.9286
+
+Tuning Clinical RF on fold 1 training data...
+Starting hyperparameter search with 180 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': 3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}
+Best CV score: 0.6650
+Clinical RF best params for fold 1: {'max_depth': 3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}
+Clinical RF - Accuracy: 0.4545, Balanced Acc: 0.3571, F1 Weighted: 0.3977
+Clinical RF - AUROC: 0.4286
+
+Tuning Clinical GB on fold 1 training data...
+Starting hyperparameter search with 1 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Best CV score: 0.5500
+Clinical GB best params for fold 1: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Clinical GB - Accuracy: 0.4545, Balanced Acc: 0.4107, F1 Weighted: 0.4545
+Clinical GB - AUROC: 0.4286
+
+--- Tuning and Training Pathology Models on Fold Training Data ---
+
+Tuning Pathology LR on fold 1 training data...
+Starting hyperparameter search with 24 combinations...
+Best parameters for LogisticRegression: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Best CV score: 0.8382
+Pathology LR best params for fold 1: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Pathology LR - Accuracy: 0.7119, Balanced Acc: 0.6759, F1 Weighted: 0.7018
+Pathology LR - AUROC: 0.7386
+
+Tuning Pathology SVM on fold 1 training data...
+Starting hyperparameter search with 60 combinations...
+Best parameters for SVC: {'C': 10.0, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+Best CV score: 0.9087
+Pathology SVM best params for fold 1: {'C': 10.0, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+Pathology SVM - Accuracy: 0.7765, Balanced Acc: 0.7428, F1 Weighted: 0.7683
+Pathology SVM - AUROC: 0.8583
+
+Tuning Pathology RF on fold 1 training data...
+Starting hyperparameter search with 6 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': 15, 'n_estimators': 200}
+Best CV score: 0.7023
+Pathology RF best params for fold 1: {'max_depth': 15, 'n_estimators': 200}
+Pathology RF - Accuracy: 0.6602, Balanced Acc: 0.6995, F1 Weighted: 0.6570
+Pathology RF - AUROC: 0.7899
+
+Tuning Pathology GB on fold 1 training data...
+Starting hyperparameter search with 1 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Best CV score: 0.7704
+Pathology GB best params for fold 1: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Pathology GB - Accuracy: 0.6870, Balanced Acc: 0.6991, F1 Weighted: 0.6904
+Pathology GB - AUROC: 0.7858
+
+--- Aggregating Pathology Predictions at Slide Level for Each Model ---
+Slide-level LR - Accuracy: 0.8182, Balanced Acc: 0.7500, F1 Weighted: 0.7992
+Slide-level LR - AUROC: 1.0000
+Slide-level SVM - Accuracy: 0.9091, Balanced Acc: 0.8750, F1 Weighted: 0.9056
+Slide-level SVM - AUROC: 1.0000
+Slide-level RF - Accuracy: 0.6364, Balanced Acc: 0.7143, F1 Weighted: 0.6242
+Slide-level RF - AUROC: 1.0000
+Slide-level GB - Accuracy: 1.0000, Balanced Acc: 1.0000, F1 Weighted: 1.0000
+Slide-level GB - AUROC: 1.0000
+
+--- Tuning and Evaluating Fusion Models ---
+
+--- Tuning combination: lr+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+=== Starting In-Fold Hyperparameter Tuned 5-Fold Cross-Validation for Multimodal Fusion ===
+Log file: infold_hypertuned_multimodal_fusion.log
+Dataset info: 55 patients, 13 clinical features, 1536 image features
+Pathology patches: 2272 Response + 1756 No Response = 4028 total
+Metrics: Accuracy, Balanced Accuracy, AUROC, F1 Weighted Score
+=== Hyperparameter tuning performed INSIDE EACH FOLD on training data only (4/5) ===
+
+=== Loading Clinical Data ===
+Clinical data shape: (55, 13)
+Number of patients in clinical data: 55
+
+=== Loading Pathology Data ===
+Pathology data shape: (4028, 1536)
+Number of patches: 4028
+
+=== Starting 5-Fold Cross-Validation with In-Fold Hyperparameter Tuning ===
+
+=== Fold 1/5 ===
+Splitting pathology data based on patient IDs...
+Pathology train set: 2945 patches
+Pathology test set: 1083 patches
+
+--- Tuning and Training Clinical Models on Fold Training Data ---
+
+Tuning Clinical LR on fold 1 training data...
+Starting hyperparameter search with 10 combinations...
+Best parameters for LogisticRegression: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Best CV score: 0.5950
+Clinical LR best params for fold 1: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Clinical LR - Accuracy: 0.3636, Balanced Acc: 0.2857, F1 Weighted: 0.3394
+Clinical LR - AUROC: 0.1071
+
+Tuning Clinical SVM on fold 1 training data...
+Starting hyperparameter search with 40 combinations...
+Best parameters for SVC: {'C': 1.0, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+Best CV score: 0.5900
+Clinical SVM best params for fold 1: {'C': 1.0, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+Clinical SVM - Accuracy: 0.3636, Balanced Acc: 0.2857, F1 Weighted: 0.3394
+Clinical SVM - AUROC: 0.9286
+
+Tuning Clinical RF on fold 1 training data...
+Starting hyperparameter search with 180 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': 3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}
+Best CV score: 0.6650
+Clinical RF best params for fold 1: {'max_depth': 3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}
+Clinical RF - Accuracy: 0.4545, Balanced Acc: 0.3571, F1 Weighted: 0.3977
+Clinical RF - AUROC: 0.4286
+
+Tuning Clinical GB on fold 1 training data...
+Starting hyperparameter search with 1 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Best CV score: 0.5500
+Clinical GB best params for fold 1: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Clinical GB - Accuracy: 0.4545, Balanced Acc: 0.4107, F1 Weighted: 0.4545
+Clinical GB - AUROC: 0.4286
+
+--- Tuning and Training Pathology Models on Fold Training Data ---
+
+Tuning Pathology LR on fold 1 training data...
+Starting hyperparameter search with 24 combinations...
+=== Starting In-Fold Hyperparameter Tuned 5-Fold Cross-Validation for Multimodal Fusion ===
+Log file: infold_hypertuned_multimodal_fusion.log
+Dataset info: 55 patients, 13 clinical features, 1536 image features
+Pathology patches: 2272 Response + 1756 No Response = 4028 total
+Metrics: Accuracy, Balanced Accuracy, AUROC, F1 Weighted Score
+=== Hyperparameter tuning performed INSIDE EACH FOLD on training data only (4/5) ===
+
+=== Loading Clinical Data ===
+Clinical data shape: (55, 13)
+Number of patients in clinical data: 55
+
+=== Loading Pathology Data ===
+Pathology data shape: (4028, 1536)
+Number of patches: 4028
+
+=== Starting 5-Fold Cross-Validation with In-Fold Hyperparameter Tuning ===
+
+=== Fold 1/5 ===
+Splitting pathology data based on patient IDs...
+Pathology train set: 2945 patches
+Pathology test set: 1083 patches
+
+--- Tuning and Training Clinical Models on Fold Training Data ---
+
+Tuning Clinical LR on fold 1 training data...
+Starting hyperparameter search with 10 combinations...
+Best parameters for LogisticRegression: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Best CV score: 0.5950
+Clinical LR best params for fold 1: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Clinical LR - Accuracy: 0.3636, Balanced Acc: 0.2857, F1 Weighted: 0.3394
+Clinical LR - AUROC: 0.1071
+
+Tuning Clinical SVM on fold 1 training data...
+Starting hyperparameter search with 40 combinations...
+Best parameters for SVC: {'C': 1.0, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+Best CV score: 0.5900
+Clinical SVM best params for fold 1: {'C': 1.0, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+Clinical SVM - Accuracy: 0.3636, Balanced Acc: 0.2857, F1 Weighted: 0.3394
+Clinical SVM - AUROC: 0.9286
+
+Tuning Clinical RF on fold 1 training data...
+Starting hyperparameter search with 180 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': 3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}
+Best CV score: 0.6650
+Clinical RF best params for fold 1: {'max_depth': 3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}
+Clinical RF - Accuracy: 0.4545, Balanced Acc: 0.3571, F1 Weighted: 0.3977
+Clinical RF - AUROC: 0.4286
+
+Tuning Clinical GB on fold 1 training data...
+Starting hyperparameter search with 1 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Best CV score: 0.5500
+Clinical GB best params for fold 1: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Clinical GB - Accuracy: 0.4545, Balanced Acc: 0.4107, F1 Weighted: 0.4545
+Clinical GB - AUROC: 0.4286
+
+--- Tuning and Training Pathology Models on Fold Training Data ---
+
+Tuning Pathology LR on fold 1 training data...
+Starting hyperparameter search with 24 combinations...
+Best parameters for LogisticRegression: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Best CV score: 0.8382
+Pathology LR best params for fold 1: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Pathology LR - Accuracy: 0.7119, Balanced Acc: 0.6759, F1 Weighted: 0.7018
+Pathology LR - AUROC: 0.7386
+
+Tuning Pathology SVM on fold 1 training data...
+Starting hyperparameter search with 60 combinations...
+Best parameters for SVC: {'C': 10.0, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+Best CV score: 0.9087
+Pathology SVM best params for fold 1: {'C': 10.0, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+Pathology SVM - Accuracy: 0.7765, Balanced Acc: 0.7428, F1 Weighted: 0.7683
+Pathology SVM - AUROC: 0.8583
+
+Tuning Pathology RF on fold 1 training data...
+Starting hyperparameter search with 6 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': 15, 'n_estimators': 200}
+Best CV score: 0.7023
+Pathology RF best params for fold 1: {'max_depth': 15, 'n_estimators': 200}
+Pathology RF - Accuracy: 0.6602, Balanced Acc: 0.6995, F1 Weighted: 0.6570
+Pathology RF - AUROC: 0.7899
+
+Tuning Pathology GB on fold 1 training data...
+Starting hyperparameter search with 1 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Best CV score: 0.7704
+Pathology GB best params for fold 1: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Pathology GB - Accuracy: 0.6870, Balanced Acc: 0.6991, F1 Weighted: 0.6904
+Pathology GB - AUROC: 0.7858
+
+--- Aggregating Pathology Predictions at Slide Level for Each Model ---
+Slide-level LR - Accuracy: 0.8182, Balanced Acc: 0.7500, F1 Weighted: 0.7992
+Slide-level LR - AUROC: 1.0000
+Slide-level SVM - Accuracy: 0.9091, Balanced Acc: 0.8750, F1 Weighted: 0.9056
+Slide-level SVM - AUROC: 1.0000
+Slide-level RF - Accuracy: 0.6364, Balanced Acc: 0.7143, F1 Weighted: 0.6242
+Slide-level RF - AUROC: 1.0000
+Slide-level GB - Accuracy: 1.0000, Balanced Acc: 1.0000, F1 Weighted: 1.0000
+Slide-level GB - AUROC: 1.0000
+
+--- Tuning and Evaluating Fusion Models ---
+
+--- Tuning combination: lr+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+lr - Accuracy: 0.6364, Balanced Acc: 0.5536, F1 Weighted: 0.5985
+Fusion lr+lr - AUROC: 0.7857
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.3636, Pathology: 0.8182, Fusion: 0.6364
+
+--- Tuning combination: lr+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+svm - Accuracy: 0.6364, Balanced Acc: 0.5536, F1 Weighted: 0.5985
+Fusion lr+svm - AUROC: 0.7857
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.3636, Pathology: 0.8182, Fusion: 0.6364
+
+--- Tuning combination: lr+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+rf - Accuracy: 0.3636, Balanced Acc: 0.2857, F1 Weighted: 0.3394
+Fusion lr+rf - AUROC: 0.2857
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.3636, Pathology: 0.7273, Fusion: 0.3636
+
+--- Tuning combination: lr+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+gb - Accuracy: 0.6364, Balanced Acc: 0.6071, F1 Weighted: 0.6364
+Fusion lr+gb - AUROC: 0.7500
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.3636, Pathology: 1.0000, Fusion: 0.6364
+
+--- Tuning combination: svm+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+lr - Accuracy: 1.0000, Balanced Acc: 1.0000, F1 Weighted: 1.0000
+Fusion svm+lr - AUROC: 1.0000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.8182, Fusion: 1.0000
+
+--- Tuning combination: svm+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+svm - Accuracy: 0.9091, Balanced Acc: 0.8750, F1 Weighted: 0.9056
+Fusion svm+svm - AUROC: 1.0000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.8182, Fusion: 0.9091
+
+--- Tuning combination: svm+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+rf - Accuracy: 0.5455, Balanced Acc: 0.6429, F1 Weighted: 0.5066
+Fusion svm+rf - AUROC: 1.0000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.7273, Fusion: 0.5455
+
+--- Tuning combination: svm+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+gb - Accuracy: 1.0000, Balanced Acc: 1.0000, F1 Weighted: 1.0000
+Fusion svm+gb - AUROC: 1.0000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 1.0000, Fusion: 1.0000
+
+--- Tuning combination: rf+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+lr - Accuracy: 0.7273, Balanced Acc: 0.6250, F1 Weighted: 0.6695
+Fusion rf+lr - AUROC: 0.8214
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.8182, Fusion: 0.7273
+
+--- Tuning combination: rf+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+svm - Accuracy: 0.8182, Balanced Acc: 0.7500, F1 Weighted: 0.7992
+Fusion rf+svm - AUROC: 0.8929
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.8182, Fusion: 0.8182
+
+--- Tuning combination: rf+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+rf - Accuracy: 0.6364, Balanced Acc: 0.6071, F1 Weighted: 0.6364
+Fusion rf+rf - AUROC: 0.6786
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.7273, Fusion: 0.6364
+
+--- Tuning combination: rf+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+gb - Accuracy: 0.7273, Balanced Acc: 0.7321, F1 Weighted: 0.7319
+Fusion rf+gb - AUROC: 0.8214
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 1.0000, Fusion: 0.7273
+
+--- Tuning combination: gb+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+lr - Accuracy: 0.5455, Balanced Acc: 0.4821, F1 Weighted: 0.5281
+Fusion gb+lr - AUROC: 0.6786
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.8182, Fusion: 0.5455
+
+--- Tuning combination: gb+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+svm - Accuracy: 0.5455, Balanced Acc: 0.4821, F1 Weighted: 0.5281
+Fusion gb+svm - AUROC: 0.7143
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.8182, Fusion: 0.5455
+
+--- Tuning combination: gb+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+rf - Accuracy: 0.4545, Balanced Acc: 0.4107, F1 Weighted: 0.4545
+Fusion gb+rf - AUROC: 0.6071
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.7273, Fusion: 0.4545
+
+--- Tuning combination: gb+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+gb - Accuracy: 0.5455, Balanced Acc: 0.4821, F1 Weighted: 0.5281
+Fusion gb+gb - AUROC: 0.7143
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 1.0000, Fusion: 0.5455
+Fold 1 completed in 7095.43 seconds
+
+=== Fold 2/5 ===
+Splitting pathology data based on patient IDs...
+Pathology train set: 3462 patches
+Pathology test set: 566 patches
+
+--- Tuning and Training Clinical Models on Fold Training Data ---
+
+Tuning Clinical LR on fold 2 training data...
+Starting hyperparameter search with 10 combinations...
+Best parameters for LogisticRegression: {'C': 1.0, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Best CV score: 0.6200
+Clinical LR best params for fold 2: {'C': 1.0, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Clinical LR - Accuracy: 0.4545, Balanced Acc: 0.4500, F1 Weighted: 0.4545
+Clinical LR - AUROC: 0.2667
+
+Tuning Clinical SVM on fold 2 training data...
+Starting hyperparameter search with 40 combinations...
+Best parameters for SVC: {'C': 1.0, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+Best CV score: 0.5700
+Clinical SVM best params for fold 2: {'C': 1.0, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+Clinical SVM - Accuracy: 0.4545, Balanced Acc: 0.4500, F1 Weighted: 0.4545
+Clinical SVM - AUROC: 0.5833
+
+Tuning Clinical RF on fold 2 training data...
+Starting hyperparameter search with 180 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': 3, 'min_samples_leaf': 2, 'min_samples_split': 5, 'n_estimators': 300}
+Best CV score: 0.5850
+Clinical RF best params for fold 2: {'max_depth': 3, 'min_samples_leaf': 2, 'min_samples_split': 5, 'n_estimators': 300}
+Clinical RF - Accuracy: 0.5455, Balanced Acc: 0.5500, F1 Weighted: 0.5455
+Clinical RF - AUROC: 0.6000
+
+Tuning Clinical GB on fold 2 training data...
+Starting hyperparameter search with 1 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Best CV score: 0.4700
+Clinical GB best params for fold 2: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Clinical GB - Accuracy: 0.4545, Balanced Acc: 0.4833, F1 Weighted: 0.3961
+Clinical GB - AUROC: 0.4833
+
+--- Tuning and Training Pathology Models on Fold Training Data ---
+
+Tuning Pathology LR on fold 2 training data...
+Starting hyperparameter search with 24 combinations...
+Best parameters for LogisticRegression: {'C': 0.01, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Best CV score: 0.8694
+Pathology LR best params for fold 2: {'C': 0.01, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Pathology LR - Accuracy: 0.5671, Balanced Acc: 0.5385, F1 Weighted: 0.5226
+Pathology LR - AUROC: 0.6303
+
+Tuning Pathology SVM on fold 2 training data...
+Starting hyperparameter search with 60 combinations...
+Best parameters for SVC: {'C': 10.0, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+Best CV score: 0.9259
+Pathology SVM best params for fold 2: {'C': 10.0, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+Pathology SVM - Accuracy: 0.6484, Balanced Acc: 0.6209, F1 Weighted: 0.6132
+Pathology SVM - AUROC: 0.7695
+
+Tuning Pathology RF on fold 2 training data...
+Starting hyperparameter search with 6 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': 15, 'n_estimators': 200}
+Best CV score: 0.7834
+Pathology RF best params for fold 2: {'max_depth': 15, 'n_estimators': 200}
+Pathology RF - Accuracy: 0.6802, Balanced Acc: 0.6877, F1 Weighted: 0.6798
+Pathology RF - AUROC: 0.7692
+
+Tuning Pathology GB on fold 2 training data...
+Starting hyperparameter search with 1 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Best CV score: 0.8364
+Pathology GB best params for fold 2: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Pathology GB - Accuracy: 0.7120, Balanced Acc: 0.7089, F1 Weighted: 0.7119
+Pathology GB - AUROC: 0.7595
+
+--- Aggregating Pathology Predictions at Slide Level for Each Model ---
+Slide-level LR - Accuracy: 0.5455, Balanced Acc: 0.5000, F1 Weighted: 0.3850
+Slide-level LR - AUROC: 0.8000
+Slide-level SVM - Accuracy: 0.5455, Balanced Acc: 0.5000, F1 Weighted: 0.3850
+Slide-level SVM - AUROC: 0.8000
+Slide-level RF - Accuracy: 0.9091, Balanced Acc: 0.9000, F1 Weighted: 0.9075
+Slide-level RF - AUROC: 0.8000
+Slide-level GB - Accuracy: 0.9091, Balanced Acc: 0.9000, F1 Weighted: 0.9075
+Slide-level GB - AUROC: 0.8000
+
+--- Tuning and Evaluating Fusion Models ---
+
+--- Tuning combination: lr+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+lr - Accuracy: 0.5455, Balanced Acc: 0.5167, F1 Weighted: 0.4935
+Fusion lr+lr - AUROC: 0.4667
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: lr+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+svm - Accuracy: 0.5455, Balanced Acc: 0.5167, F1 Weighted: 0.4935
+Fusion lr+svm - AUROC: 0.5667
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: lr+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+rf - Accuracy: 0.4545, Balanced Acc: 0.4500, F1 Weighted: 0.4545
+Fusion lr+rf - AUROC: 0.4667
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.9091, Fusion: 0.4545
+
+--- Tuning combination: lr+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+gb - Accuracy: 0.6364, Balanced Acc: 0.6500, F1 Weighted: 0.6303
+Fusion lr+gb - AUROC: 0.6000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.9091, Fusion: 0.6364
+
+--- Tuning combination: svm+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+lr - Accuracy: 0.5455, Balanced Acc: 0.5000, F1 Weighted: 0.3850
+Fusion svm+lr - AUROC: 0.8000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: svm+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+svm - Accuracy: 0.5455, Balanced Acc: 0.5000, F1 Weighted: 0.3850
+Fusion svm+svm - AUROC: 0.8000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: svm+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+rf - Accuracy: 0.9091, Balanced Acc: 0.9000, F1 Weighted: 0.9075
+Fusion svm+rf - AUROC: 0.8000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.9091, Fusion: 0.9091
+
+--- Tuning combination: svm+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+gb - Accuracy: 0.9091, Balanced Acc: 0.9000, F1 Weighted: 0.9075
+Fusion svm+gb - AUROC: 0.8000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.9091, Fusion: 0.9091
+
+--- Tuning combination: rf+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+lr - Accuracy: 0.6364, Balanced Acc: 0.6000, F1 Weighted: 0.5606
+Fusion rf+lr - AUROC: 0.7000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.5455, Fusion: 0.6364
+
+--- Tuning combination: rf+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+svm - Accuracy: 0.6364, Balanced Acc: 0.6000, F1 Weighted: 0.5606
+Fusion rf+svm - AUROC: 0.8333
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.5455, Fusion: 0.6364
+
+--- Tuning combination: rf+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+rf - Accuracy: 0.7273, Balanced Acc: 0.7333, F1 Weighted: 0.7273
+Fusion rf+rf - AUROC: 0.7000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.9091, Fusion: 0.7273
+
+--- Tuning combination: rf+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+gb - Accuracy: 0.8182, Balanced Acc: 0.8167, F1 Weighted: 0.8182
+Fusion rf+gb - AUROC: 0.8333
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.9091, Fusion: 0.8182
+
+--- Tuning combination: gb+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+lr - Accuracy: 0.5455, Balanced Acc: 0.5667, F1 Weighted: 0.5221
+Fusion gb+lr - AUROC: 0.6667
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: gb+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+svm - Accuracy: 0.5455, Balanced Acc: 0.5667, F1 Weighted: 0.5221
+Fusion gb+svm - AUROC: 0.8333
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: gb+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+rf - Accuracy: 0.4545, Balanced Acc: 0.4833, F1 Weighted: 0.3961
+Fusion gb+rf - AUROC: 0.7000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.9091, Fusion: 0.4545
+
+--- Tuning combination: gb+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+gb - Accuracy: 0.5455, Balanced Acc: 0.5667, F1 Weighted: 0.5221
+Fusion gb+gb - AUROC: 0.8000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.9091, Fusion: 0.5455
+Fold 2 completed in 9095.66 seconds
+
+=== Fold 3/5 ===
+Splitting pathology data based on patient IDs...
+Pathology train set: 3372 patches
+Pathology test set: 656 patches
+
+--- Tuning and Training Clinical Models on Fold Training Data ---
+
+Tuning Clinical LR on fold 3 training data...
+Starting hyperparameter search with 10 combinations...
+Best parameters for LogisticRegression: {'C': 10.0, 'max_iter': 1000, 'penalty': 'l1', 'solver': 'liblinear'}
+Best CV score: 0.5350
+Clinical LR best params for fold 3: {'C': 10.0, 'max_iter': 1000, 'penalty': 'l1', 'solver': 'liblinear'}
+Clinical LR - Accuracy: 0.5455, Balanced Acc: 0.5167, F1 Weighted: 0.4935
+Clinical LR - AUROC: 0.2667
+
+Tuning Clinical SVM on fold 3 training data...
+Starting hyperparameter search with 40 combinations...
+Best parameters for SVC: {'C': 0.1, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+Best CV score: 0.5600
+Clinical SVM best params for fold 3: {'C': 0.1, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+Clinical SVM - Accuracy: 0.5455, Balanced Acc: 0.5167, F1 Weighted: 0.4935
+Clinical SVM - AUROC: 0.7667
+
+Tuning Clinical RF on fold 3 training data...
+Starting hyperparameter search with 180 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': 7, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}
+Best CV score: 0.6300
+Clinical RF best params for fold 3: {'max_depth': 7, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}
+Clinical RF - Accuracy: 0.3636, Balanced Acc: 0.3667, F1 Weighted: 0.3636
+Clinical RF - AUROC: 0.4000
+
+Tuning Clinical GB on fold 3 training data...
+Starting hyperparameter search with 1 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Best CV score: 0.5300
+Clinical GB best params for fold 3: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Clinical GB - Accuracy: 0.5455, Balanced Acc: 0.5667, F1 Weighted: 0.5221
+Clinical GB - AUROC: 0.5667
+
+--- Tuning and Training Pathology Models on Fold Training Data ---
+
+Tuning Pathology LR on fold 3 training data...
+Starting hyperparameter search with 24 combinations...
+Best parameters for LogisticRegression: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Best CV score: 0.8709
+Pathology LR best params for fold 3: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Pathology LR - Accuracy: 0.4771, Balanced Acc: 0.5030, F1 Weighted: 0.3890
+Pathology LR - AUROC: 0.4623
+
+Tuning Pathology SVM on fold 3 training data...
+Starting hyperparameter search with 60 combinations...
+Best parameters for SVC: {'C': 10.0, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+Best CV score: 0.9354
+Pathology SVM best params for fold 3: {'C': 10.0, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+Pathology SVM - Accuracy: 0.4817, Balanced Acc: 0.5094, F1 Weighted: 0.3799
+Pathology SVM - AUROC: 0.5680
+
+Tuning Pathology RF on fold 3 training data...
+Starting hyperparameter search with 6 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': 15, 'n_estimators': 200}
+Best CV score: 0.8121
+Pathology RF best params for fold 3: {'max_depth': 15, 'n_estimators': 200}
+Pathology RF - Accuracy: 0.4299, Balanced Acc: 0.4464, F1 Weighted: 0.3932
+Pathology RF - AUROC: 0.3789
+
+Tuning Pathology GB on fold 3 training data...
+Starting hyperparameter search with 1 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Best CV score: 0.8259
+Pathology GB best params for fold 3: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Pathology GB - Accuracy: 0.4619, Balanced Acc: 0.4787, F1 Weighted: 0.4268
+Pathology GB - AUROC: 0.4367
+
+--- Aggregating Pathology Predictions at Slide Level for Each Model ---
+Slide-level LR - Accuracy: 0.6364, Balanced Acc: 0.6000, F1 Weighted: 0.5606
+Slide-level LR - AUROC: 0.4333
+Slide-level SVM - Accuracy: 0.5455, Balanced Acc: 0.5000, F1 Weighted: 0.3850
+Slide-level SVM - AUROC: 0.6000
+Slide-level RF - Accuracy: 0.7273, Balanced Acc: 0.7000, F1 Weighted: 0.6961
+Slide-level RF - AUROC: 0.6000
+Slide-level GB - Accuracy: 0.7273, Balanced Acc: 0.7000, F1 Weighted: 0.6961
+Slide-level GB - AUROC: 0.6000
+
+--- Tuning and Evaluating Fusion Models ---
+
+--- Tuning combination: lr+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+lr - Accuracy: 0.5455, Balanced Acc: 0.5167, F1 Weighted: 0.4935
+Fusion lr+lr - AUROC: 0.4000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: lr+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+svm - Accuracy: 0.5455, Balanced Acc: 0.5167, F1 Weighted: 0.4935
+Fusion lr+svm - AUROC: 0.4000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: lr+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+rf - Accuracy: 0.5455, Balanced Acc: 0.5167, F1 Weighted: 0.4935
+Fusion lr+rf - AUROC: 0.3667
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.7273, Fusion: 0.5455
+
+--- Tuning combination: lr+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+gb - Accuracy: 0.5455, Balanced Acc: 0.5167, F1 Weighted: 0.4935
+Fusion lr+gb - AUROC: 0.4667
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.7273, Fusion: 0.5455
+
+--- Tuning combination: svm+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+lr - Accuracy: 0.5455, Balanced Acc: 0.5000, F1 Weighted: 0.3850
+Fusion svm+lr - AUROC: 0.7000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: svm+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+svm - Accuracy: 0.5455, Balanced Acc: 0.5000, F1 Weighted: 0.3850
+Fusion svm+svm - AUROC: 0.8000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: svm+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+rf - Accuracy: 0.5455, Balanced Acc: 0.5333, F1 Weighted: 0.5377
+Fusion svm+rf - AUROC: 0.5000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.7273, Fusion: 0.5455
+
+--- Tuning combination: svm+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+gb - Accuracy: 0.8182, Balanced Acc: 0.8000, F1 Weighted: 0.8084
+Fusion svm+gb - AUROC: 0.6667
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.7273, Fusion: 0.8182
+
+--- Tuning combination: rf+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+lr - Accuracy: 0.6364, Balanced Acc: 0.6000, F1 Weighted: 0.5606
+Fusion rf+lr - AUROC: 0.4000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.2727, Pathology: 0.5455, Fusion: 0.6364
+
+--- Tuning combination: rf+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+svm - Accuracy: 0.6364, Balanced Acc: 0.6000, F1 Weighted: 0.5606
+Fusion rf+svm - AUROC: 0.4667
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.2727, Pathology: 0.5455, Fusion: 0.6364
+
+--- Tuning combination: rf+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+rf - Accuracy: 0.3636, Balanced Acc: 0.3500, F1 Weighted: 0.3528
+Fusion rf+rf - AUROC: 0.4000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.2727, Pathology: 0.7273, Fusion: 0.3636
+
+--- Tuning combination: rf+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+gb - Accuracy: 0.7273, Balanced Acc: 0.7000, F1 Weighted: 0.6961
+Fusion rf+gb - AUROC: 0.5333
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.2727, Pathology: 0.7273, Fusion: 0.7273
+
+--- Tuning combination: gb+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+lr - Accuracy: 0.5455, Balanced Acc: 0.5667, F1 Weighted: 0.5221
+Fusion gb+lr - AUROC: 0.5333
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: gb+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+svm - Accuracy: 0.5455, Balanced Acc: 0.5667, F1 Weighted: 0.5221
+Fusion gb+svm - AUROC: 0.6333
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: gb+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+rf - Accuracy: 0.5455, Balanced Acc: 0.5667, F1 Weighted: 0.5221
+Fusion gb+rf - AUROC: 0.6667
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.7273, Fusion: 0.5455
+
+--- Tuning combination: gb+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+gb - Accuracy: 0.5455, Balanced Acc: 0.5667, F1 Weighted: 0.5221
+Fusion gb+gb - AUROC: 0.6667
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.7273, Fusion: 0.5455
+Fold 3 completed in 8590.41 seconds
+
+=== Fold 4/5 ===
+Splitting pathology data based on patient IDs...
+Pathology train set: 3148 patches
+Pathology test set: 880 patches
+
+--- Tuning and Training Clinical Models on Fold Training Data ---
+
+Tuning Clinical LR on fold 4 training data...
+Starting hyperparameter search with 10 combinations...
+Best parameters for LogisticRegression: {'C': 0.01, 'max_iter': 1000, 'penalty': 'l1', 'solver': 'liblinear'}
+Best CV score: 0.5000
+Clinical LR best params for fold 4: {'C': 0.01, 'max_iter': 1000, 'penalty': 'l1', 'solver': 'liblinear'}
+Clinical LR - Accuracy: 0.3636, Balanced Acc: 0.5000, F1 Weighted: 0.1939
+Clinical LR - AUROC: 0.5000
+
+Tuning Clinical SVM on fold 4 training data...
+Starting hyperparameter search with 40 combinations...
+Best parameters for SVC: {'C': 100.0, 'gamma': 0.001, 'kernel': 'rbf', 'probability': True}
+Best CV score: 0.5500
+Clinical SVM best params for fold 4: {'C': 100.0, 'gamma': 0.001, 'kernel': 'rbf', 'probability': True}
+Clinical SVM - Accuracy: 0.1818, Balanced Acc: 0.1964, F1 Weighted: 0.1818
+Clinical SVM - AUROC: 0.7500
+
+Tuning Clinical RF on fold 4 training data...
+Starting hyperparameter search with 180 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': 5, 'min_samples_leaf': 1, 'min_samples_split': 5, 'n_estimators': 200}
+Best CV score: 0.5500
+Clinical RF best params for fold 4: {'max_depth': 5, 'min_samples_leaf': 1, 'min_samples_split': 5, 'n_estimators': 200}
+Clinical RF - Accuracy: 0.3636, Balanced Acc: 0.3393, F1 Weighted: 0.3745
+Clinical RF - AUROC: 0.2500
+
+Tuning Clinical GB on fold 4 training data...
+Starting hyperparameter search with 1 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Best CV score: 0.4000
+Clinical GB best params for fold 4: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Clinical GB - Accuracy: 0.4545, Balanced Acc: 0.4643, F1 Weighted: 0.4636
+Clinical GB - AUROC: 0.5000
+
+--- Tuning and Training Pathology Models on Fold Training Data ---
+
+Tuning Pathology LR on fold 4 training data...
+Starting hyperparameter search with 24 combinations...
+Best parameters for LogisticRegression: {'C': 0.01, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Best CV score: 0.8536
+Pathology LR best params for fold 4: {'C': 0.01, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Pathology LR - Accuracy: 0.5909, Balanced Acc: 0.6756, F1 Weighted: 0.6131
+Pathology LR - AUROC: 0.6894
+
+Tuning Pathology SVM on fold 4 training data...
+Starting hyperparameter search with 60 combinations...
+Best parameters for SVC: {'C': 10.0, 'gamma': 0.001, 'kernel': 'rbf', 'probability': True}
+Best CV score: 0.9267
+Pathology SVM best params for fold 4: {'C': 10.0, 'gamma': 0.001, 'kernel': 'rbf', 'probability': True}
+Pathology SVM - Accuracy: 0.6170, Balanced Acc: 0.7196, F1 Weighted: 0.6366
+Pathology SVM - AUROC: 0.8344
+
+Tuning Pathology RF on fold 4 training data...
+Starting hyperparameter search with 6 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': 15, 'n_estimators': 200}
+Best CV score: 0.8220
+Pathology RF best params for fold 4: {'max_depth': 15, 'n_estimators': 200}
+Pathology RF - Accuracy: 0.6136, Balanced Acc: 0.6718, F1 Weighted: 0.6375
+Pathology RF - AUROC: 0.7626
+
+Tuning Pathology GB on fold 4 training data...
+Starting hyperparameter search with 1 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Best CV score: 0.8329
+Pathology GB best params for fold 4: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Pathology GB - Accuracy: 0.6489, Balanced Acc: 0.7057, F1 Weighted: 0.6711
+Pathology GB - AUROC: 0.7836
+
+--- Aggregating Pathology Predictions at Slide Level for Each Model ---
+Slide-level LR - Accuracy: 0.6364, Balanced Acc: 0.7143, F1 Weighted: 0.6242
+Slide-level LR - AUROC: 0.7500
+Slide-level SVM - Accuracy: 0.7273, Balanced Acc: 0.7857, F1 Weighted: 0.7273
+Slide-level SVM - AUROC: 0.9286
+Slide-level RF - Accuracy: 0.6364, Balanced Acc: 0.7143, F1 Weighted: 0.6242
+Slide-level RF - AUROC: 0.8929
+Slide-level GB - Accuracy: 0.7273, Balanced Acc: 0.7857, F1 Weighted: 0.7273
+Slide-level GB - AUROC: 0.8929
+
+--- Tuning and Evaluating Fusion Models ---
+
+--- Tuning combination: lr+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+lr - Accuracy: 0.6364, Balanced Acc: 0.7143, F1 Weighted: 0.6242
+Fusion lr+lr - AUROC: 0.7500
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.6364, Pathology: 0.6364, Fusion: 0.6364
+
+--- Tuning combination: lr+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+svm - Accuracy: 0.7273, Balanced Acc: 0.7857, F1 Weighted: 0.7273
+Fusion lr+svm - AUROC: 0.9286
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.6364, Pathology: 0.7273, Fusion: 0.7273
+
+--- Tuning combination: lr+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+rf - Accuracy: 0.7273, Balanced Acc: 0.7857, F1 Weighted: 0.7273
+Fusion lr+rf - AUROC: 0.8929
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.6364, Pathology: 0.7273, Fusion: 0.7273
+
+--- Tuning combination: lr+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+gb - Accuracy: 0.8182, Balanced Acc: 0.8571, F1 Weighted: 0.8212
+Fusion lr+gb - AUROC: 0.8929
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.6364, Pathology: 0.8182, Fusion: 0.8182
+
+--- Tuning combination: svm+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+lr - Accuracy: 0.7273, Balanced Acc: 0.7857, F1 Weighted: 0.7273
+Fusion svm+lr - AUROC: 0.8214
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.7273, Pathology: 0.6364, Fusion: 0.7273
+
+--- Tuning combination: svm+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+svm - Accuracy: 0.7273, Balanced Acc: 0.7857, F1 Weighted: 0.7273
+Fusion svm+svm - AUROC: 0.9643
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.7273, Pathology: 0.7273, Fusion: 0.7273
+
+--- Tuning combination: svm+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+rf - Accuracy: 0.6364, Balanced Acc: 0.6607, F1 Weighted: 0.6424
+Fusion svm+rf - AUROC: 0.8929
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.7273, Pathology: 0.7273, Fusion: 0.6364
+
+--- Tuning combination: svm+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+gb - Accuracy: 0.8182, Balanced Acc: 0.8571, F1 Weighted: 0.8212
+Fusion svm+gb - AUROC: 0.9286
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.7273, Pathology: 0.8182, Fusion: 0.8182
+
+--- Tuning combination: rf+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+lr - Accuracy: 0.6364, Balanced Acc: 0.7143, F1 Weighted: 0.6242
+Fusion rf+lr - AUROC: 0.7143
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.3636, Pathology: 0.6364, Fusion: 0.6364
+
+--- Tuning combination: rf+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+svm - Accuracy: 0.6364, Balanced Acc: 0.7143, F1 Weighted: 0.6242
+Fusion rf+svm - AUROC: 0.7857
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.3636, Pathology: 0.7273, Fusion: 0.6364
+
+--- Tuning combination: rf+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+rf - Accuracy: 0.7273, Balanced Acc: 0.7857, F1 Weighted: 0.7273
+Fusion rf+rf - AUROC: 0.6786
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.3636, Pathology: 0.7273, Fusion: 0.7273
+
+--- Tuning combination: rf+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+gb - Accuracy: 0.7273, Balanced Acc: 0.7857, F1 Weighted: 0.7273
+Fusion rf+gb - AUROC: 0.7857
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.3636, Pathology: 0.8182, Fusion: 0.7273
+
+--- Tuning combination: gb+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+lr - Accuracy: 0.4545, Balanced Acc: 0.4643, F1 Weighted: 0.4636
+Fusion gb+lr - AUROC: 0.6071
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.6364, Fusion: 0.4545
+
+--- Tuning combination: gb+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+svm - Accuracy: 0.4545, Balanced Acc: 0.4643, F1 Weighted: 0.4636
+Fusion gb+svm - AUROC: 0.6786
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.7273, Fusion: 0.4545
+
+--- Tuning combination: gb+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+rf - Accuracy: 0.4545, Balanced Acc: 0.4643, F1 Weighted: 0.4636
+Fusion gb+rf - AUROC: 0.6429
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.7273, Fusion: 0.4545
+
+--- Tuning combination: gb+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+gb - Accuracy: 0.4545, Balanced Acc: 0.4643, F1 Weighted: 0.4636
+Fusion gb+gb - AUROC: 0.6429
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.4545, Pathology: 0.8182, Fusion: 0.4545
+Fold 4 completed in 7917.90 seconds
+
+=== Fold 5/5 ===
+Splitting pathology data based on patient IDs...
+Pathology train set: 3185 patches
+Pathology test set: 843 patches
+
+--- Tuning and Training Clinical Models on Fold Training Data ---
+
+Tuning Clinical LR on fold 5 training data...
+Starting hyperparameter search with 10 combinations...
+Best parameters for LogisticRegression: {'C': 0.01, 'max_iter': 1000, 'penalty': 'l1', 'solver': 'liblinear'}
+Best CV score: 0.5000
+Clinical LR best params for fold 5: {'C': 0.01, 'max_iter': 1000, 'penalty': 'l1', 'solver': 'liblinear'}
+Clinical LR - Accuracy: 0.4545, Balanced Acc: 0.5000, F1 Weighted: 0.2841
+Clinical LR - AUROC: 0.5000
+
+Tuning Clinical SVM on fold 5 training data...
+Starting hyperparameter search with 40 combinations...
+Best parameters for SVC: {'C': 0.1, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+Best CV score: 0.5000
+Clinical SVM best params for fold 5: {'C': 0.1, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+Clinical SVM - Accuracy: 0.4545, Balanced Acc: 0.5000, F1 Weighted: 0.2841
+Clinical SVM - AUROC: 0.3333
+
+Tuning Clinical RF on fold 5 training data...
+Starting hyperparameter search with 180 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': 5, 'min_samples_leaf': 1, 'min_samples_split': 5, 'n_estimators': 100}
+Best CV score: 0.4650
+Clinical RF best params for fold 5: {'max_depth': 5, 'min_samples_leaf': 1, 'min_samples_split': 5, 'n_estimators': 100}
+Clinical RF - Accuracy: 0.6364, Balanced Acc: 0.6500, F1 Weighted: 0.6303
+Clinical RF - AUROC: 0.6000
+
+Tuning Clinical GB on fold 5 training data...
+Starting hyperparameter search with 1 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Best CV score: 0.4350
+Clinical GB best params for fold 5: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Clinical GB - Accuracy: 0.7273, Balanced Acc: 0.7500, F1 Weighted: 0.7133
+Clinical GB - AUROC: 0.7667
+
+--- Tuning and Training Pathology Models on Fold Training Data ---
+
+Tuning Pathology LR on fold 5 training data...
+Starting hyperparameter search with 24 combinations...
+Best parameters for LogisticRegression: {'C': 0.01, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Best CV score: 0.8655
+Pathology LR best params for fold 5: {'C': 0.01, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+Pathology LR - Accuracy: 0.4899, Balanced Acc: 0.5982, F1 Weighted: 0.4780
+Pathology LR - AUROC: 0.6403
+
+Tuning Pathology SVM on fold 5 training data...
+Starting hyperparameter search with 60 combinations...
+Best parameters for SVC: {'C': 10.0, 'gamma': 0.001, 'kernel': 'rbf', 'probability': True}
+Best CV score: 0.9304
+Pathology SVM best params for fold 5: {'C': 10.0, 'gamma': 0.001, 'kernel': 'rbf', 'probability': True}
+Pathology SVM - Accuracy: 0.4947, Balanced Acc: 0.6208, F1 Weighted: 0.4726
+Pathology SVM - AUROC: 0.7752
+
+Tuning Pathology RF on fold 5 training data...
+Starting hyperparameter search with 6 combinations...
+Best parameters for RandomForestClassifier: {'max_depth': 15, 'n_estimators': 200}
+Best CV score: 0.8507
+Pathology RF best params for fold 5: {'max_depth': 15, 'n_estimators': 200}
+Pathology RF - Accuracy: 0.4520, Balanced Acc: 0.5654, F1 Weighted: 0.4317
+Pathology RF - AUROC: 0.6576
+
+Tuning Pathology GB on fold 5 training data...
+Starting hyperparameter search with 1 combinations...
+Best parameters for GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Best CV score: 0.8476
+Pathology GB best params for fold 5: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+Pathology GB - Accuracy: 0.4614, Balanced Acc: 0.5691, F1 Weighted: 0.4463
+Pathology GB - AUROC: 0.6584
+
+--- Aggregating Pathology Predictions at Slide Level for Each Model ---
+Slide-level LR - Accuracy: 0.6364, Balanced Acc: 0.6667, F1 Weighted: 0.5974
+Slide-level LR - AUROC: 0.9000
+Slide-level SVM - Accuracy: 0.6364, Balanced Acc: 0.6667, F1 Weighted: 0.5974
+Slide-level SVM - AUROC: 1.0000
+Slide-level RF - Accuracy: 0.6364, Balanced Acc: 0.6667, F1 Weighted: 0.5974
+Slide-level RF - AUROC: 0.8000
+Slide-level GB - Accuracy: 0.5455, Balanced Acc: 0.5833, F1 Weighted: 0.4589
+Slide-level GB - AUROC: 0.9000
+
+--- Tuning and Evaluating Fusion Models ---
+
+--- Tuning combination: lr+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+lr - Accuracy: 0.6364, Balanced Acc: 0.6667, F1 Weighted: 0.5974
+Fusion lr+lr - AUROC: 0.9000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.6364, Fusion: 0.6364
+
+--- Tuning combination: lr+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+svm - Accuracy: 0.6364, Balanced Acc: 0.6667, F1 Weighted: 0.5974
+Fusion lr+svm - AUROC: 1.0000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.6364, Fusion: 0.6364
+
+--- Tuning combination: lr+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+rf - Accuracy: 0.5455, Balanced Acc: 0.5833, F1 Weighted: 0.4589
+Fusion lr+rf - AUROC: 0.8000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: lr+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion lr+gb - Accuracy: 0.5455, Balanced Acc: 0.5833, F1 Weighted: 0.4589
+Fusion lr+gb - AUROC: 0.9000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: svm+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+lr - Accuracy: 0.6364, Balanced Acc: 0.6667, F1 Weighted: 0.5974
+Fusion svm+lr - AUROC: 0.8333
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.6364, Fusion: 0.6364
+
+--- Tuning combination: svm+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+svm - Accuracy: 0.6364, Balanced Acc: 0.6667, F1 Weighted: 0.5974
+Fusion svm+svm - AUROC: 1.0000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.6364, Fusion: 0.6364
+
+--- Tuning combination: svm+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+rf - Accuracy: 0.5455, Balanced Acc: 0.5833, F1 Weighted: 0.4589
+Fusion svm+rf - AUROC: 0.8000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: svm+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion svm+gb - Accuracy: 0.5455, Balanced Acc: 0.5833, F1 Weighted: 0.4589
+Fusion svm+gb - AUROC: 0.9000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.5455, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: rf+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+lr - Accuracy: 0.6364, Balanced Acc: 0.6667, F1 Weighted: 0.5974
+Fusion rf+lr - AUROC: 0.8333
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.6364, Pathology: 0.6364, Fusion: 0.6364
+
+--- Tuning combination: rf+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+svm - Accuracy: 0.6364, Balanced Acc: 0.6667, F1 Weighted: 0.5974
+Fusion rf+svm - AUROC: 0.8667
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.6364, Pathology: 0.6364, Fusion: 0.6364
+
+--- Tuning combination: rf+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+rf - Accuracy: 0.5455, Balanced Acc: 0.5833, F1 Weighted: 0.4589
+Fusion rf+rf - AUROC: 0.7333
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.6364, Pathology: 0.5455, Fusion: 0.5455
+
+--- Tuning combination: rf+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion rf+gb - Accuracy: 0.6364, Balanced Acc: 0.6667, F1 Weighted: 0.5974
+Fusion rf+gb - AUROC: 0.8333
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.6364, Pathology: 0.5455, Fusion: 0.6364
+
+--- Tuning combination: gb+lr ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+lr - Accuracy: 0.7273, Balanced Acc: 0.7500, F1 Weighted: 0.7133
+Fusion gb+lr - AUROC: 0.9000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.7273, Pathology: 0.6364, Fusion: 0.7273
+
+--- Tuning combination: gb+svm ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+svm - Accuracy: 0.7273, Balanced Acc: 0.7500, F1 Weighted: 0.7133
+Fusion gb+svm - AUROC: 1.0000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.7273, Pathology: 0.6364, Fusion: 0.7273
+
+--- Tuning combination: gb+rf ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+rf - Accuracy: 0.7273, Balanced Acc: 0.7500, F1 Weighted: 0.7133
+Fusion gb+rf - AUROC: 0.8000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.7273, Pathology: 0.5455, Fusion: 0.7273
+
+--- Tuning combination: gb+gb ---
+Found 11 common patients for fusion
+Tuning fusion weights and threshold...
+Best fusion parameters: {'weight': 0.5, 'threshold': 0.5}
+Best fusion score: 0.0000
+Fusion gb+gb - Accuracy: 0.7273, Balanced Acc: 0.7500, F1 Weighted: 0.7133
+Fusion gb+gb - AUROC: 0.9000
+Tuned weights - Clinical: 0.50, Pathology: 0.50
+Tuned threshold: 0.50
+On common patients - Clinical: 0.7273, Pathology: 0.5455, Fusion: 0.7273
+Fold 5 completed in 7888.30 seconds
+
+=== Best Hyperparameters Found in Each Fold ===
+
+Clinical Models:
+LR:
+  Fold 1: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+  Fold 2: {'C': 1.0, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+  Fold 3: {'C': 10.0, 'max_iter': 1000, 'penalty': 'l1', 'solver': 'liblinear'}
+  Fold 4: {'C': 0.01, 'max_iter': 1000, 'penalty': 'l1', 'solver': 'liblinear'}
+  Fold 5: {'C': 0.01, 'max_iter': 1000, 'penalty': 'l1', 'solver': 'liblinear'}
+SVM:
+  Fold 1: {'C': 1.0, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+  Fold 2: {'C': 1.0, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+  Fold 3: {'C': 0.1, 'gamma': 'scale', 'kernel': 'linear', 'probability': True}
+  Fold 4: {'C': 100.0, 'gamma': 0.001, 'kernel': 'rbf', 'probability': True}
+  Fold 5: {'C': 0.1, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+RF:
+  Fold 1: {'max_depth': 3, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}
+  Fold 2: {'max_depth': 3, 'min_samples_leaf': 2, 'min_samples_split': 5, 'n_estimators': 300}
+  Fold 3: {'max_depth': 7, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}
+  Fold 4: {'max_depth': 5, 'min_samples_leaf': 1, 'min_samples_split': 5, 'n_estimators': 200}
+  Fold 5: {'max_depth': 5, 'min_samples_leaf': 1, 'min_samples_split': 5, 'n_estimators': 100}
+GB:
+  Fold 1: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+  Fold 2: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+  Fold 3: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+  Fold 4: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+  Fold 5: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+
+Pathology Models:
+LR:
+  Fold 1: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+  Fold 2: {'C': 0.01, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+  Fold 3: {'C': 0.1, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+  Fold 4: {'C': 0.01, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+  Fold 5: {'C': 0.01, 'max_iter': 1000, 'penalty': 'l2', 'solver': 'liblinear'}
+SVM:
+  Fold 1: {'C': 10.0, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+  Fold 2: {'C': 10.0, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+  Fold 3: {'C': 10.0, 'gamma': 'scale', 'kernel': 'rbf', 'probability': True}
+  Fold 4: {'C': 10.0, 'gamma': 0.001, 'kernel': 'rbf', 'probability': True}
+  Fold 5: {'C': 10.0, 'gamma': 0.001, 'kernel': 'rbf', 'probability': True}
+RF:
+  Fold 1: {'max_depth': 15, 'n_estimators': 200}
+  Fold 2: {'max_depth': 15, 'n_estimators': 200}
+  Fold 3: {'max_depth': 15, 'n_estimators': 200}
+  Fold 4: {'max_depth': 15, 'n_estimators': 200}
+  Fold 5: {'max_depth': 15, 'n_estimators': 200}
+GB:
+  Fold 1: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+  Fold 2: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+  Fold 3: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+  Fold 4: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+  Fold 5: {'learning_rate': 0.1, 'max_depth': 10, 'n_estimators': 100}
+
+Fusion Models:
+lr+lr:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+lr+svm:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+lr+rf:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+lr+gb:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+svm+lr:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+svm+svm:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+svm+rf:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+svm+gb:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+rf+lr:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+rf+svm:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+rf+rf:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+rf+gb:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+gb+lr:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+gb+svm:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+gb+rf:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+gb+gb:
+  Fold 1: {'weight': 0.5, 'threshold': 0.5}
+  Fold 2: {'weight': 0.5, 'threshold': 0.5}
+  Fold 3: {'weight': 0.5, 'threshold': 0.5}
+  Fold 4: {'weight': 0.5, 'threshold': 0.5}
+  Fold 5: {'weight': 0.5, 'threshold': 0.5}
+
+=== Clinical Models Performance (mean ± std) ===
+Clinical LR - Accuracy: 0.4364 ± 0.0680
+Clinical LR - Balanced Accuracy: 0.4505 ± 0.0854
+Clinical LR - Auroc: 0.3281 ± 0.1520
+Clinical LR - F1 Weighted: 0.3531 ± 0.1098
+Clinical SVM - Accuracy: 0.4000 ± 0.1233
+Clinical SVM - Balanced Accuracy: 0.3898 ± 0.1266
+Clinical SVM - Auroc: 0.6724 ± 0.2017
+Clinical SVM - F1 Weighted: 0.3507 ± 0.1134
+Clinical RF - Accuracy: 0.4727 ± 0.1060
+Clinical RF - Balanced Accuracy: 0.4526 ± 0.1247
+Clinical RF - Auroc: 0.4557 ± 0.1325
+Clinical RF - F1 Weighted: 0.4623 ± 0.1065
+Clinical GB - Accuracy: 0.5273 ± 0.1060
+Clinical GB - Balanced Accuracy: 0.5350 ± 0.1186
+Clinical GB - Auroc: 0.5490 ± 0.1174
+Clinical GB - F1 Weighted: 0.5099 ± 0.1092
+
+=== Pathology Models Performance - Patch Level (mean ± std) ===
+Pathology LR (Patch) - Accuracy: 0.5674 ± 0.0844
+Pathology LR (Patch) - Balanced Accuracy: 0.5983 ± 0.0702
+Pathology LR (Patch) - Auroc: 0.6322 ± 0.0933
+Pathology LR (Patch) - F1 Weighted: 0.5409 ± 0.1081
+Pathology SVM (Patch) - Accuracy: 0.6037 ± 0.1085
+Pathology SVM (Patch) - Balanced Accuracy: 0.6427 ± 0.0833
+Pathology SVM (Patch) - Auroc: 0.7611 ± 0.1024
+Pathology SVM (Patch) - F1 Weighted: 0.5741 ± 0.1350
+Pathology RF (Patch) - Accuracy: 0.5672 ± 0.1056
+Pathology RF (Patch) - Balanced Accuracy: 0.6141 ± 0.0965
+Pathology RF (Patch) - Auroc: 0.6716 ± 0.1534
+Pathology RF (Patch) - F1 Weighted: 0.5598 ± 0.1217
+Pathology GB (Patch) - Accuracy: 0.5942 ± 0.1101
+Pathology GB (Patch) - Balanced Accuracy: 0.6323 ± 0.0931
+Pathology GB (Patch) - Auroc: 0.6848 ± 0.1325
+Pathology GB (Patch) - F1 Weighted: 0.5893 ± 0.1255
+
+=== Pathology Models Performance - Slide Level (mean ± std) ===
+Pathology LR (Slide) - Accuracy: 0.6545 ± 0.0891
+Pathology LR (Slide) - Balanced Accuracy: 0.6462 ± 0.0887
+Pathology LR (Slide) - Auroc: 0.7767 ± 0.1919
+Pathology LR (Slide) - F1 Weighted: 0.5933 ± 0.1325
+Pathology SVM (Slide) - Accuracy: 0.6727 ± 0.1361
+Pathology SVM (Slide) - Balanced Accuracy: 0.6655 ± 0.1504
+Pathology SVM (Slide) - Auroc: 0.8657 ± 0.1516
+Pathology SVM (Slide) - F1 Weighted: 0.6001 ± 0.2010
+Pathology RF (Slide) - Accuracy: 0.7091 ± 0.1060
+Pathology RF (Slide) - Balanced Accuracy: 0.7390 ± 0.0823
+Pathology RF (Slide) - Auroc: 0.8186 ± 0.1318
+Pathology RF (Slide) - F1 Weighted: 0.6899 ± 0.1137
+Pathology GB (Slide) - Accuracy: 0.7818 ± 0.1585
+Pathology GB (Slide) - Balanced Accuracy: 0.7938 ± 0.1463
+Pathology GB (Slide) - Auroc: 0.8386 ± 0.1350
+Pathology GB (Slide) - F1 Weighted: 0.7580 ± 0.1872
+
+=== Fusion Models Performance (mean ± std) ===
+Fusion lr+lr - Accuracy: 0.6000 ± 0.0445
+Fusion lr+lr - Balanced Accuracy: 0.5936 ± 0.0817
+Fusion lr+lr - Auroc: 0.6605 ± 0.1931
+Fusion lr+lr - F1 Weighted: 0.5614 ± 0.0563
+Avg Patients for lr+lr: 11.0
+Fusion lr+svm - Accuracy: 0.6182 ± 0.0680
+Fusion lr+svm - Balanced Accuracy: 0.6079 ± 0.1046
+Fusion lr+svm - Auroc: 0.7362 ± 0.2240
+Fusion lr+svm - F1 Weighted: 0.5820 ± 0.0863
+Avg Patients for lr+svm: 11.0
+Fusion lr+rf - Accuracy: 0.5273 ± 0.1206
+Fusion lr+rf - Balanced Accuracy: 0.5243 ± 0.1639
+Fusion lr+rf - Auroc: 0.5624 ± 0.2407
+Fusion lr+rf - F1 Weighted: 0.4947 ± 0.1274
+Avg Patients for lr+rf: 11.0
+Fusion lr+gb - Accuracy: 0.6364 ± 0.0996
+Fusion lr+gb - Balanced Accuracy: 0.6429 ± 0.1155
+Fusion lr+gb - Auroc: 0.7219 ± 0.1684
+Fusion lr+gb - F1 Weighted: 0.6081 ± 0.1281
+Avg Patients for lr+gb: 11.0
+Fusion svm+lr - Accuracy: 0.6909 ± 0.1686
+Fusion svm+lr - Balanced Accuracy: 0.6905 ± 0.1887
+Fusion svm+lr - Auroc: 0.8310 ± 0.0967
+Fusion svm+lr - F1 Weighted: 0.6189 ± 0.2310
+Avg Patients for svm+lr: 11.0
+Fusion svm+svm - Accuracy: 0.6727 ± 0.1361
+Fusion svm+svm - Balanced Accuracy: 0.6655 ± 0.1504
+Fusion svm+svm - Auroc: 0.9129 ± 0.0931
+Fusion svm+svm - F1 Weighted: 0.6001 ± 0.2010
+Avg Patients for svm+svm: 11.0
+Fusion svm+rf - Accuracy: 0.6364 ± 0.1408
+Fusion svm+rf - Balanced Accuracy: 0.6640 ± 0.1263
+Fusion svm+rf - Auroc: 0.7986 ± 0.1665
+Fusion svm+rf - F1 Weighted: 0.6106 ± 0.1602
+Avg Patients for svm+rf: 11.0
+Fusion svm+gb - Accuracy: 0.8182 ± 0.1521
+Fusion svm+gb - Balanced Accuracy: 0.8281 ± 0.1388
+Fusion svm+gb - Auroc: 0.8590 ± 0.1157
+Fusion svm+gb - F1 Weighted: 0.7992 ± 0.1835
+Avg Patients for svm+gb: 11.0
+Fusion rf+lr - Accuracy: 0.6545 ± 0.0364
+Fusion rf+lr - Balanced Accuracy: 0.6412 ± 0.0439
+Fusion rf+lr - Auroc: 0.6938 ± 0.1565
+Fusion rf+lr - F1 Weighted: 0.6025 ± 0.0412
+Avg Patients for rf+lr: 11.0
+Fusion rf+svm - Accuracy: 0.6727 ± 0.0727
+Fusion rf+svm - Balanced Accuracy: 0.6662 ± 0.0602
+Fusion rf+svm - Auroc: 0.7690 ± 0.1554
+Fusion rf+svm - F1 Weighted: 0.6284 ± 0.0887
+Avg Patients for rf+svm: 11.0
+Fusion rf+rf - Accuracy: 0.6000 ± 0.1361
+Fusion rf+rf - Balanced Accuracy: 0.6119 ± 0.1513
+Fusion rf+rf - Auroc: 0.6381 ± 0.1207
+Fusion rf+rf - F1 Weighted: 0.5805 ± 0.1502
+Avg Patients for rf+rf: 11.0
+Fusion rf+gb - Accuracy: 0.7273 ± 0.0575
+Fusion rf+gb - Balanced Accuracy: 0.7402 ± 0.0548
+Fusion rf+gb - Auroc: 0.7614 ± 0.1154
+Fusion rf+gb - F1 Weighted: 0.7142 ± 0.0711
+Avg Patients for rf+gb: 11.0
+Fusion gb+lr - Accuracy: 0.5636 ± 0.0891
+Fusion gb+lr - Balanced Accuracy: 0.5660 ± 0.1012
+Fusion gb+lr - Auroc: 0.6771 ± 0.1228
+Fusion gb+lr - F1 Weighted: 0.5499 ± 0.0850
+Avg Patients for gb+lr: 11.0
+Fusion gb+svm - Accuracy: 0.5636 ± 0.0891
+Fusion gb+svm - Balanced Accuracy: 0.5660 ± 0.1012
+Fusion gb+svm - Auroc: 0.7719 ± 0.1319
+Fusion gb+svm - F1 Weighted: 0.5499 ± 0.0850
+Avg Patients for gb+svm: 11.0
+Fusion gb+rf - Accuracy: 0.5273 ± 0.1060
+Fusion gb+rf - Balanced Accuracy: 0.5350 ± 0.1186
+Fusion gb+rf - Auroc: 0.6833 ± 0.0657
+Fusion gb+rf - F1 Weighted: 0.5099 ± 0.1092
+Avg Patients for gb+rf: 11.0
+Fusion gb+gb - Accuracy: 0.5636 ± 0.0891
+Fusion gb+gb - Balanced Accuracy: 0.5660 ± 0.1012
+Fusion gb+gb - Auroc: 0.7448 ± 0.0944
+Fusion gb+gb - F1 Weighted: 0.5499 ± 0.0850
+Avg Patients for gb+gb: 11.0
+
+=== Best Performing Combinations ===
+
+Top 3 combinations by Accuracy:
+Fusion svm+gb: 0.8182 ± 0.1521
+Fusion rf+gb: 0.7273 ± 0.0575
+Fusion svm+lr: 0.6909 ± 0.1686
+
+Top 3 combinations by Balanced Accuracy:
+Fusion svm+gb: 0.8281 ± 0.1388
+Fusion rf+gb: 0.7402 ± 0.0548
+Fusion svm+lr: 0.6905 ± 0.1887
+
+Top 3 combinations by Auroc:
+Fusion svm+svm: 0.9129 ± 0.0931
+Fusion svm+gb: 0.8590 ± 0.1157
+Fusion svm+lr: 0.8310 ± 0.0967
+
+Top 3 combinations by F1 Weighted:
+Fusion svm+gb: 0.7992 ± 0.1835
+Fusion rf+gb: 0.7142 ± 0.0711
+Fusion rf+svm: 0.6284 ± 0.0887
+
+Fusion models that outperformed both constituent models (balanced accuracy):
+Fusion svm+lr: 0.6905 ± 0.1887 (improvement: +0.1164)
+Fusion svm+svm: 0.6655 ± 0.1504 (improvement: +0.0914)
+Fusion svm+gb: 0.8281 ± 0.1388 (improvement: +0.2540)
+Fusion rf+lr: 0.6412 ± 0.0439 (improvement: +0.2052)
+Fusion rf+svm: 0.6662 ± 0.0602 (improvement: +0.2302)
+
+=== Saving Results to CSV ===
+Results saved to infold_hypertuned_multimodal_performance.csv
+Best hyperparameters saved to infold_best_hyperparameters.pkl
+
+=== In-Fold Hyperparameter Tuning Complete ===
+Hyperparameter tuning performed INSIDE EACH FOLD on training data only (4/5)
+All metrics calculated: Accuracy, Balanced Accuracy, AUROC, F1 Weighted Score
