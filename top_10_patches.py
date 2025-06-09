@@ -269,7 +269,6 @@ def visualize_top_patches(top_class0, top_class1, output_dir="top_patches"):
                 save_path = os.path.join(output_dir, "class1_no_response", img_filename)
             shutil.copy2(path, save_path)
             
-        plt.suptitle(title, fontsize=16)
         plt.tight_layout()
         plt.subplots_adjust(top=0.9)
         plt.savefig(os.path.join(output_dir, filename), bbox_inches='tight', dpi=300)
