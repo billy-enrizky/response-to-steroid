@@ -20,6 +20,11 @@ from sklearn.metrics import (
 )
 from sklearn.pipeline import Pipeline
 from sklearn.base import clone
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
+import os
 
 from utils.my_utils import get_eval_metrics, eval_sklearn_classifier, calculate_feature_weights, get_slide_level_predictions, train_eval_sklearn_model
 
@@ -320,6 +325,285 @@ def tune_hyperparameters_on_training_set(X_train, y_train, model_name, base_mode
         return None, {}, 0.0
 
 
+def visualize_aggregated_features(clinical_features, pathology_features, labels, patient_ids, output_dir="feature_visualizations"):
+    """
+    Create visualizations of aggregated features.
+    
+    Args:
+        clinical_features: Array of clinical features per patient
+        pathology_features: Array of aggregated pathology features per patient
+        labels: Array of labels per patient
+        patient_ids: List of patient IDs
+        output_dir: Directory to save visualization outputs
+    """
+    os.makedirs(output_dir, exist_ok=True)
+    label_names = ["Response", "No Response"]
+    
+    log_output(f"\n=== Creating Feature Visualizations in {output_dir} ===")
+    
+    # 1. Feature distribution visualization
+    plt.figure(figsize=(12, 6))
+    
+    # Calculate mean and std for pathology features
+    path_means = np.mean(pathology_features, axis=1)
+    path_stds = np.std(pathology_features, axis=1)
+    
+    # Split by class
+    class0_means = path_means[labels == 0]
+    class1_means = path_means[labels == 1]
+    class0_stds = path_stds[labels == 0]
+    class1_stds = path_stds[labels == 1]
+    
+    plt.subplot(1, 2, 1)
+    sns.kdeplot(class0_means, label=label_names[0], shade=True)
+    sns.kdeplot(class1_means, label=label_names[1], shade=True)
+    plt.title('Distribution of Mean Feature Values')
+    plt.xlabel('Mean Feature Value')
+    plt.ylabel('Density')
+    plt.legend()
+    
+    plt.subplot(1, 2, 2)
+    sns.kdeplot(class0_stds, label=label_names[0], shade=True)
+    sns.kdeplot(class1_stds, label=label_names[1], shade=True)
+    plt.title('Distribution of Feature Standard Deviations')
+    plt.xlabel('Standard Deviation')
+    plt.ylabel('Density')
+    plt.legend()
+    
+    plt.tight_layout()
+    plt.savefig(f'{output_dir}/feature_distributions.png', dpi=300)
+    
+    # 2. t-SNE visualization
+    log_output("Applying t-SNE to visualize feature spaces...")
+    
+    # Function to create t-SNE plot
+    def create_tsne_plot(features, title, filename):
+        tsne = TSNE(n_components=2, random_state=SEED, perplexity=min(30, len(features)-1))
+        features_2d = tsne.fit_transform(features)
+        
+        plt.figure(figsize=(10, 8))
+        for i, label in enumerate([0, 1]):
+            indices = labels == label
+            plt.scatter(
+                features_2d[indices, 0], 
+                features_2d[indices, 1],
+                label=label_names[i],
+                alpha=0.7
+            )
+        
+        # Add patient IDs as annotations
+        for i, pid in enumerate(patient_ids):
+            plt.annotate(pid, (features_2d[i, 0], features_2d[i, 1]), 
+                        fontsize=8, alpha=0.7)
+        
+        plt.title(title)
+        plt.xlabel('t-SNE Component 1')
+        plt.ylabel('t-SNE Component 2')
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+        plt.savefig(filename, dpi=300)
+    
+    # Create t-SNE plots for each feature type
+    create_tsne_plot(clinical_features, 'Clinical Features t-SNE', f'{output_dir}/clinical_tsne.png')
+    create_tsne_plot(pathology_features, 'Pathology Features t-SNE', f'{output_dir}/pathology_tsne.png')
+    
+    # Concatenate features for combined visualization
+    combined_features = np.concatenate((clinical_features, pathology_features), axis=1)
+    create_tsne_plot(combined_features, 'Combined Features t-SNE', f'{output_dir}/combined_tsne.png')
+    
+    # 3. PCA visualization for pathology features
+    log_output("Creating PCA visualization for pathology features...")
+    pca = PCA(n_components=2)
+    pca_result = pca.fit_transform(pathology_features)
+    
+    plt.figure(figsize=(10, 8))
+    for i, label in enumerate([0, 1]):
+        indices = labels == label
+        plt.scatter(
+            pca_result[indices, 0], 
+            pca_result[indices, 1],
+            label=label_names[i],
+            alpha=0.7
+        )
+    
+    # Add patient IDs
+    for i, pid in enumerate(patient_ids):
+        plt.annotate(pid, (pca_result[i, 0], pca_result[i, 1]), 
+                    fontsize=8, alpha=0.7)
+    
+    plt.title(f'PCA of Pathology Features (explained variance: {pca.explained_variance_ratio_.sum():.2f})')
+    plt.xlabel(f'PC1 ({pca.explained_variance_ratio_[0]:.2f})')
+    plt.ylabel(f'PC2 ({pca.explained_variance_ratio_[1]:.2f})')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.savefig(f'{output_dir}/pathology_pca.png', dpi=300)
+    
+    # 4. Feature heatmap for selected patients
+    log_output("Creating feature heatmaps...")
+    
+    # Select a subset of patients for the heatmap (avoid overcrowding)
+    max_patients = min(20, len(patient_ids))
+    sample_indices = np.random.choice(len(patient_ids), max_patients, replace=False)
+    
+    # Clinical features heatmap
+    plt.figure(figsize=(12, 10))
+    clinical_subset = clinical_features[sample_indices]
+    sns.heatmap(clinical_subset, cmap='viridis')
+    plt.title('Clinical Features Heatmap (Sample of Patients)')
+    plt.xlabel('Feature Index')
+    plt.ylabel('Patient Index')
+    plt.savefig(f'{output_dir}/clinical_heatmap.png', dpi=300)
+    
+    # Pathology features heatmap (sample due to high dimensionality)
+    plt.figure(figsize=(14, 10))
+    # Take first 100 pathology features for visualization
+    pathology_subset = pathology_features[sample_indices, :100]
+    sns.heatmap(pathology_subset, cmap='viridis')
+    plt.title('Pathology Features Heatmap (First 100 features, Sample of Patients)')
+    plt.xlabel('Feature Index')
+    plt.ylabel('Patient Index')
+    plt.savefig(f'{output_dir}/pathology_heatmap.png', dpi=300)
+    
+    log_output(f"Feature visualizations created and saved to directory: {output_dir}")
+
+def visualize_patient_embeddings(clinical_features, pathology_features, labels, patient_ids, n_patients=10, output_dir="patient_visualizations"):
+    """
+    Visualize aggregated mean feature embeddings for random patients.
+    
+    Args:
+        clinical_features: Array of clinical features per patient
+        pathology_features: Array of pathology features per patient
+        labels: Array of labels per patient
+        patient_ids: List of patient IDs
+        n_patients: Number of random patients to visualize
+        output_dir: Directory to save visualizations
+    """
+    os.makedirs(output_dir, exist_ok=True)
+    label_names = ["Response", "No Response"]
+    
+    # Select random patients, ensuring mixture of both classes if possible
+    class0_indices = np.where(labels == 0)[0]
+    class1_indices = np.where(labels == 1)[0]
+    
+    n_class0 = min(n_patients // 2, len(class0_indices))
+    n_class1 = min(n_patients - n_class0, len(class1_indices))
+    
+    # Adjust if one class has fewer patients
+    if n_class0 + n_class1 < n_patients:
+        if len(class0_indices) > n_class0:
+            n_class0 = min(n_patients - n_class1, len(class0_indices))
+        elif len(class1_indices) > n_class1:
+            n_class1 = min(n_patients - n_class0, len(class1_indices))
+    
+    # Select random indices from each class
+    selected_class0 = np.random.choice(class0_indices, n_class0, replace=False)
+    selected_class1 = np.random.choice(class1_indices, n_class1, replace=False)
+    selected_indices = np.concatenate([selected_class0, selected_class1])
+    
+    # Get selected data
+    selected_patient_ids = [patient_ids[i] for i in selected_indices]
+    selected_labels = labels[selected_indices]
+    selected_clinical = clinical_features[selected_indices]
+    selected_pathology = pathology_features[selected_indices]
+    
+    log_output(f"\n=== Visualizing Embeddings for {len(selected_indices)} Random Patients ===")
+    
+    # 1. Heatmap of pathology embeddings (first 100 dimensions)
+    plt.figure(figsize=(16, 10))
+    display_dims = min(100, selected_pathology.shape[1])  # Display up to 100 dimensions
+    
+    # Sort by class for better visualization
+    sort_idx = np.argsort(selected_labels)
+    sorted_ids = [selected_patient_ids[i] for i in sort_idx]
+    sorted_labels = selected_labels[sort_idx]
+    sorted_pathology = selected_pathology[sort_idx, :display_dims]
+    
+    # Create custom y-tick labels with patient ID and class
+    y_labels = [f"{pid} ({label_names[label]})" for pid, label in zip(sorted_ids, sorted_labels)]
+    
+    # Plot the heatmap
+    ax = sns.heatmap(sorted_pathology, cmap="viridis", yticklabels=y_labels)
+    plt.title(f'Pathology Feature Embeddings for {len(selected_indices)} Patients (First {display_dims} dimensions)')
+    plt.xlabel('Feature Dimension')
+    plt.tight_layout()
+    plt.savefig(f'{output_dir}/patient_pathology_embeddings.png', dpi=300)
+    
+    # 2. Clinical feature comparison
+    plt.figure(figsize=(14, 8))
+    sorted_clinical = selected_clinical[sort_idx]
+    
+    sns.heatmap(sorted_clinical, cmap="coolwarm", yticklabels=y_labels)
+    plt.title(f'Clinical Features for {len(selected_indices)} Patients')
+    plt.xlabel('Clinical Feature Index')
+    plt.tight_layout()
+    plt.savefig(f'{output_dir}/patient_clinical_features.png', dpi=300)
+    
+    # 3. Embedding statistics visualization
+    plt.figure(figsize=(12, 8))
+    
+    # Calculate statistics for each patient
+    means = np.mean(selected_pathology, axis=1)
+    stds = np.std(selected_pathology, axis=1)
+    mins = np.min(selected_pathology, axis=1)
+    maxs = np.max(selected_pathology, axis=1)
+    
+    # Create barplot of embedding statistics
+    x = np.arange(len(selected_patient_ids))
+    width = 0.2
+    
+    # Plot bars for each statistic
+    plt.bar(x - width*1.5, means, width, label='Mean')
+    plt.bar(x - width*0.5, stds, width, label='Std Dev')
+    plt.bar(x + width*0.5, maxs, width, label='Max')
+    plt.bar(x + width*1.5, mins, width, label='Min')
+    
+    # Add color bands to indicate class
+    for i in range(len(selected_indices)):
+        if selected_labels[i] == 0:
+            plt.axvspan(i - 0.5, i + 0.5, alpha=0.1, color='green')
+        else:
+            plt.axvspan(i - 0.5, i + 0.5, alpha=0.1, color='red')
+    
+    plt.xticks(x, selected_patient_ids, rotation=90)
+    plt.legend()
+    plt.title('Pathology Embedding Statistics by Patient')
+    plt.ylabel('Value')
+    plt.grid(axis='y', alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(f'{output_dir}/patient_embedding_statistics.png', dpi=300)
+    
+    # 4. Feature distribution by patient
+    plt.figure(figsize=(15, 10))
+    
+    # Create subplots, one for each patient
+    rows = int(np.ceil(len(selected_indices) / 3))
+    cols = min(3, len(selected_indices))
+    
+    for i, idx in enumerate(range(len(selected_indices))):
+        if i >= rows * cols:
+            break
+            
+        plt.subplot(rows, cols, i+1)
+        
+        # Get patient data
+        patient_id = selected_patient_ids[idx]
+        patient_label = selected_labels[idx]
+        patient_embedding = selected_pathology[idx]
+        
+        # Plot histogram of features
+        sns.histplot(patient_embedding, kde=True)
+        plt.title(f"Patient {patient_id}\n{label_names[patient_label]}")
+        plt.xlabel("Feature Value")
+        plt.ylabel("Frequency")
+        
+    plt.tight_layout()
+    plt.savefig(f'{output_dir}/patient_embedding_distributions.png', dpi=300)
+    
+    log_output(f"✓ Patient-level visualizations saved to {output_dir}/")
+    
+    return selected_indices, selected_patient_ids
+
+# Add visualization call in the main function after creating multimodal dataset
 def main():
     log_output("=== Starting Nested Cross-Validation for Multimodal Early Fusion ===")
     log_output(f"Log file: {log_file}")
@@ -397,6 +681,16 @@ def main():
     # Check label distribution
     label_counts = Counter(multimodal_data['labels'])
     log_output(f"Label distribution: {dict(label_counts)}")
+    
+    # ------ NEW: Add Feature Visualization ------
+    # After creating multimodal_data
+    visualize_patient_embeddings(
+        multimodal_data['clinical_features'], 
+        multimodal_data['pathology_features'],
+        multimodal_data['labels'],
+        multimodal_data['patients']
+    )
+    exit(0)
     
     # ------ 5. Prepare Data for Evaluation ------
     X_clinical_all = multimodal_data['clinical_features']
