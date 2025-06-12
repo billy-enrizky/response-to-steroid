@@ -34,7 +34,7 @@ flowchart TD
 
 ```
 
-# Multimodal Late Fusion
+# Multimodal Early Fusion
 
 ```mermaid
 flowchart TD
