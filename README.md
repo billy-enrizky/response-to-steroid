@@ -33,3 +33,55 @@ flowchart TD
     class F,FP fusionBox
 
 ```
+
+# Multimodal Late Fusion
+
+```mermaid
+flowchart TD
+    subgraph Input["Data Collection"]
+        A["Clinical Data\n(Patient Medical Records)"] 
+        B["Pathology Data\n(Tissue Images)"]
+    end
+
+    subgraph Processing["Data Processing"]
+        C["Extract Clinical Features\n(Age, Lab Values, etc.)"]
+        D["Extract Pathology Features\n(Image Analysis)"]
+    end
+
+    subgraph Fusion["Early Fusion"]
+        E["Combined Features\n(Concatenated Data)"]
+    end
+
+    subgraph Models["Machine Learning Models"]
+        F["Clinical Only\nModels"]
+        G["Pathology Only\nModels"]
+        H["Fusion Models\n(Combined Data)"]
+    end
+
+    subgraph Evaluation["Cross-Validation Evaluation"]
+        I["Compare Performance\n(Accuracy, AUC, F1 Score)"]
+    end
+
+    A --> C
+    B --> D
+    C --> F
+    D --> G
+    C --> E
+    D --> E
+    E --> H
+    F --> I
+    G --> I
+    H --> I
+    
+    classDef blue fill:#cce5ff,stroke:#0066cc,color:#000
+    classDef green fill:#d4edda,stroke:#28a745,color:#000
+    classDef orange fill:#fff3cd,stroke:#fd7e14,color:#000
+    classDef purple fill:#e2d9f3,stroke:#6f42c1,color:#000
+    classDef red fill:#f8d7da,stroke:#dc3545,color:#000
+    
+    class Input blue
+    class Processing green
+    class Fusion orange
+    class Models purple
+    class Evaluation red
+```
