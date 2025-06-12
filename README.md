@@ -39,27 +39,27 @@ flowchart TD
 ```mermaid
 flowchart TD
     subgraph Input["Data Collection"]
-        A["Clinical Data\n(Patient Medical Records)"] 
-        B["Pathology Data\n(Tissue Images)"]
+        A["Clinical Data<br>(Patient Medical Records)"] 
+        B["Pathology Data<br>(Tissue Images)"]
     end
 
     subgraph Processing["Data Processing"]
-        C["Extract Clinical Features\n(Age, Lab Values, etc.)"]
-        D["Extract Pathology Features\n(Image Analysis)"]
+        C["Extract Clinical Features<br>(Age, Lab Values, etc.)"]
+        D["Extract Pathology Features<br>(Image Analysis)"]
     end
 
     subgraph Fusion["Early Fusion"]
-        E["Combined Features\n(Concatenated Data)"]
+        E["Combined Features<br>(Concatenated Data)"]
     end
 
     subgraph Models["Machine Learning Models"]
-        F["Clinical Only\nModels"]
-        G["Pathology Only\nModels"]
-        H["Fusion Models\n(Combined Data)"]
+        F["Clinical Only<br>Models"]
+        G["Pathology Only<br>Models"]
+        H["Fusion Models<br>(Combined Data)"]
     end
 
     subgraph Evaluation["Cross-Validation Evaluation"]
-        I["Compare Performance\n(Accuracy, AUC, F1 Score)"]
+        I["Compare Performance<br>(Accuracy, AUC, F1 Score)"]
     end
 
     A --> C
