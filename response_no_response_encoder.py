@@ -12,26 +12,14 @@ import seaborn as sns
 
 import torch
 from torch.utils.data import DataLoader, Dataset
-from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, RandomForestRegressor
 from sklearn.linear_model import LogisticRegression as sk_LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import (
-    balanced_accuracy_score, roc_auc_score, accuracy_score,
-    cohen_kappa_score, classification_report, confusion_matrix, f1_score
-)
 from sklearn.exceptions import ConvergenceWarning
 from warnings import simplefilter
 from utils.my_utils import extract_features, log_output, get_eval_metrics, eval_sklearn_classifier
-
-from sklearn.preprocessing import normalize
-from sklearn.decomposition import PCA
-from sklearn.manifold import TSNE
-from sklearn.metrics import pairwise_distances, silhouette_score
-import umap.umap_ as umap
-import tqdm
 
 # Set seed for reproducibility
 seed_value = 42
@@ -114,22 +102,150 @@ test_dataloader  = torch.utils.data.DataLoader(no_response_dataset,
                                            num_workers=4)
 
 # Extract features
-response_features = extract_features(model, train_dataloader)
-no_response_features = extract_features(model, test_dataloader)
+# response_features = extract_features(model, train_dataloader)
+# no_response_features = extract_features(model, test_dataloader)
 
 # Save response_features and no_response_features to files
-with open('response_features_portal_tract.pkl', 'wb') as f:
-    pickle.dump(response_features, f)
+# with open('response_features_portal_tract.pkl', 'wb') as f:
+#     pickle.dump(response_features, f)
 
-with open('no_response_features_portal_tract.pkl', 'wb') as f:
-    pickle.dump(no_response_features, f)
+# with open('no_response_features_portal_tract.pkl', 'wb') as f:
+#     pickle.dump(no_response_features, f)
 
-# Load features from files
-# with open('response_features_portal_tract.pkl', 'rb') as f:
-#     response_features = pickle.load(f)
-# with open('no_response_features_portal_tract.pkl', 'rb') as f:
-#     no_response_features = pickle.load(f)
+with open('response_features_portal_tract.pkl', 'rb') as f:
+    response_features = pickle.load(f)
+with open('no_response_features_portal_tract.pkl', 'rb') as f:
+    no_response_features = pickle.load(f)
 
+log_output("Visualizing random patches before and after encoding...")
+
+# Select 10 random patches for visualization
+def visualize_patches_and_embeddings(model, dataloader, transform, num_patches=10):
+    """Visualize random patches before and after encoding"""
+    
+    # Collect some sample images and their embeddings
+    sample_images = []
+    sample_embeddings = []
+    sample_labels = []
+    
+    model.eval()
+    with torch.no_grad():
+        for batch_idx, (batch, labels) in enumerate(dataloader):
+            if len(sample_images) >= num_patches:
+                break
+                
+            batch = batch.to(device)
+            embeddings = model(batch).detach().cpu()
+            
+            # Add samples from this batch
+            for i in range(batch.size(0)):
+                if len(sample_images) >= num_patches:
+                    break
+                sample_images.append(batch[i].cpu())
+                sample_embeddings.append(embeddings[i])
+                sample_labels.append(labels[i].item())
+    
+    # Create visualization
+    fig, axes = plt.subplots(3, num_patches, figsize=(20, 8))
+    
+    for i in range(num_patches):
+        # Original image (denormalize for display)
+        img = sample_images[i]
+        # Denormalize the image (assuming ImageNet normalization)
+        mean = torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
+        std = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
+        img_denorm = img * std + mean
+        img_denorm = torch.clamp(img_denorm, 0, 1)
+        
+        # Display original image
+        axes[0, i].imshow(img_denorm.permute(1, 2, 0))
+        axes[0, i].set_title(f'Patch {i+1}\nLabel: {"Response" if sample_labels[i] == 0 else "No Response"}')
+        axes[0, i].axis('off')
+        
+        # Display embedding as heatmap (first 64 dimensions reshaped to 8x8)
+        embedding = sample_embeddings[i][:64].reshape(8, 8)
+        im1 = axes[1, i].imshow(embedding, cmap='viridis', aspect='auto')
+        axes[1, i].set_title(f'Embedding Heatmap\n(First 64 dims)')
+        axes[1, i].axis('off')
+        
+        # Display embedding distribution
+        axes[2, i].hist(sample_embeddings[i].numpy(), bins=30, alpha=0.7, color='blue')
+        axes[2, i].set_title(f'Embedding Distribution\n(Mean: {sample_embeddings[i].mean():.3f})')
+        axes[2, i].set_xlabel('Value')
+        axes[2, i].set_ylabel('Frequency')
+    
+    # Add row labels
+    axes[0, 0].text(-0.1, 0.5, 'Original\nPatches', transform=axes[0, 0].transAxes, 
+                    rotation=90, va='center', ha='right', fontsize=12, fontweight='bold')
+    axes[1, 0].text(-0.1, 0.5, 'Embedding\nHeatmaps', transform=axes[1, 0].transAxes, 
+                    rotation=90, va='center', ha='right', fontsize=12, fontweight='bold')
+    axes[2, 0].text(-0.1, 0.5, 'Embedding\nDistributions', transform=axes[2, 0].transAxes, 
+                    rotation=90, va='center', ha='right', fontsize=12, fontweight='bold')
+    
+    plt.tight_layout()
+    plt.savefig('patch_encoding_visualization.png', dpi=300, bbox_inches='tight')
+    plt.show()
+    
+    # Print embedding statistics
+    log_output("\nEmbedding Statistics:")
+    for i in range(num_patches):
+        emb = sample_embeddings[i]
+        log_output(f"Patch {i+1} - Shape: {emb.shape}, Mean: {emb.mean():.4f}, "
+                  f"Std: {emb.std():.4f}, Min: {emb.min():.4f}, Max: {emb.max():.4f}")
+
+# Visualize patches from both response and no_response datasets
+log_output("Visualizing Response patches:")
+visualize_patches_and_embeddings(model, train_dataloader, transform, num_patches=5)
+
+log_output("Visualizing No Response patches:")
+visualize_patches_and_embeddings(model, test_dataloader, transform, num_patches=5)
+
+# Additional visualization: t-SNE of embeddings
+from sklearn.manifold import TSNE
+
+def visualize_embedding_space(response_features, no_response_features, n_samples=500):
+    """Visualize embedding space using t-SNE"""
+    
+    # Sample embeddings for visualization
+    resp_emb = response_features['embeddings']
+    no_resp_emb = no_response_features['embeddings']
+    
+    # Sample random indices
+    resp_indices = np.random.choice(len(resp_emb), min(n_samples//2, len(resp_emb)), replace=False)
+    no_resp_indices = np.random.choice(len(no_resp_emb), min(n_samples//2, len(no_resp_emb)), replace=False)
+    
+    # Combine embeddings and labels
+    embeddings_sample = np.vstack([
+        resp_emb[resp_indices],
+        no_resp_emb[no_resp_indices]
+    ])
+    labels_sample = np.concatenate([
+        np.zeros(len(resp_indices)),
+        np.ones(len(no_resp_indices))
+    ])
+    
+    # Apply t-SNE
+    log_output(f"Applying t-SNE to {len(embeddings_sample)} embeddings...")
+    tsne = TSNE(n_components=2, random_state=42, perplexity=30)
+    embeddings_2d = tsne.fit_transform(embeddings_sample)
+    
+    # Create visualization
+    plt.figure(figsize=(10, 8))
+    scatter = plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], 
+                         c=labels_sample, cmap='coolwarm', alpha=0.6)
+    plt.colorbar(scatter, ticks=[0, 1], label='Response (0) / No Response (1)')
+    plt.title('t-SNE Visualization of Vision Transformer Embeddings')
+    plt.xlabel('t-SNE Component 1')
+    plt.ylabel('t-SNE Component 2')
+    plt.grid(True, alpha=0.3)
+    plt.savefig('embedding_tsne_visualization.png', dpi=300, bbox_inches='tight')
+    plt.show()
+
+log_output("Creating t-SNE visualization of embedding space...")
+visualize_embedding_space(response_features, no_response_features)
+
+log_output("Visualization completed. Check 'patch_encoding_visualization.png' and 'embedding_tsne_visualization.png'")
+exit(0)
 log_output("Clinical Data Processing ...")
 
 # ──────────────────────────── 9. Load Clinical Data ─────────────────────────
